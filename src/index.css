@@ -1,107 +1,81 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
-
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
-
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 90%;
-
-    --radius: 0.5rem;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
   }
-  
   body {
-    @apply bg-background text-foreground font-sans;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-bold tracking-tight;
-  }
-}
-
-@layer components {
-  .btn-primary {
-    @apply bg-primary text-primary-foreground px-6 py-3 rounded-full hover:opacity-90 transition-opacity inline-flex items-center justify-center font-medium;
-  }
-  
-  .btn-secondary {
-    @apply bg-secondary text-secondary-foreground px-6 py-3 rounded-full hover:bg-secondary/80 transition-colors inline-flex items-center justify-center font-medium;
-  }
-  
-  .btn-outline {
-    @apply border border-input bg-background px-6 py-3 rounded-full hover:bg-accent transition-colors inline-flex items-center justify-center font-medium;
-  }
-  
-  .product-card {
-    @apply bg-white rounded-md overflow-hidden transition-all duration-300 hover:shadow-md animate-slide-in-bottom;
-  }
-  
-  .color-selector {
-    @apply w-8 h-8 rounded-full border border-gray-200 cursor-pointer transition-transform hover:scale-110;
-  }
-  
-  .color-selector.active {
-    @apply ring-2 ring-black ring-offset-2;
-  }
-  
-  .size-selector {
-    @apply px-4 py-2 rounded-full bg-secondary text-sm font-medium cursor-pointer transition-colors;
-  }
-  
-  .size-selector.active {
-    @apply bg-black text-white;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
   
   .filter-item {
-    @apply flex items-center justify-between w-full py-3 text-left border-b border-gray-200;
+    @apply flex items-center justify-between w-full py-2 hover:bg-secondary/50 transition-colors;
   }
   
-  .quantity-input {
-    @apply flex items-center bg-secondary rounded-full p-1 w-fit;
+  .color-selector {
+    @apply h-8 w-8 rounded-full border-2 border-transparent cursor-pointer hover:scale-110 transition-transform;
   }
   
-  .newsletter-input {
-    @apply bg-white bg-opacity-10 border border-white border-opacity-20 rounded-full px-6 py-3 w-full text-white placeholder:text-white placeholder:text-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-30;
+  .color-selector.active {
+    @apply border-primary;
   }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  
+  .size-selector {
+    @apply px-2 py-1 border border-border rounded-md text-sm hover:bg-secondary transition-colors;
+  }
+  
+  .size-selector.active {
+    @apply bg-primary text-primary-foreground;
   }
 }

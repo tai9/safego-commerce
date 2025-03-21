@@ -1,6 +1,6 @@
 
 import { X } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import FilterSidebar from "./FilterSidebar";
 import { Button } from "@/components/ui/button";
 
@@ -29,7 +29,8 @@ const MobileFilter: React.FC<MobileFilterProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] p-0 h-[90vh] max-h-[900px] overflow-auto">
-        <div className="sticky top-0 bg-white z-10 flex items-center justify-between p-4 border-b">
+        <DialogTitle className="sr-only">Product Filters</DialogTitle>
+        <div className="sticky top-0 bg-background z-10 flex items-center justify-between p-4 border-b">
           <h2 className="font-medium text-lg">Filters</h2>
           <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
             <X size={20} />

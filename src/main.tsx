@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ClerkProvider } from "@clerk/clerk-react";
 import App from "./App";
 import "./index.css";
+import { ThemeProvider } from "./hooks/use-theme";
 
 const queryClient = new QueryClient();
 
@@ -23,13 +24,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
       signInFallbackRedirectUrl="/dashboard"
-      signUpFallbackRedirectUrl="/"
       signInForceRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/"
       signUpForceRedirectUrl="/"
       afterSignOutUrl="/"
     >
       <QueryClientProvider client={queryClient}>
-        <App />
+        <ThemeProvider defaultTheme="light">
+          <App />
+        </ThemeProvider>
       </QueryClientProvider>
     </ClerkProvider>
   </React.StrictMode>

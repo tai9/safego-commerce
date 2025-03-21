@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { ChevronUp, ChevronDown, SlidersHorizontal } from "lucide-react";
+import { ChevronUp, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -49,7 +49,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   ];
   
   const sizes = ["XX-Small", "X-Small", "Small", "Medium", "Large", "X-Large", "XX-Large", "3X-Large", "4X-Large"];
-  const dressStyles = ["Casual", "Formal", "Party", "Gym"];
+  const dressStyles = ["All", "Casual", "Formal", "Party", "Gym"];
   
   const toggleSection = (section: keyof typeof filters) => {
     setFilters(prev => ({
@@ -74,11 +74,43 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     onFilterChange({ dressStyle: style });
   };
   
+  const clearAllFilters = () => {
+    onFilterChange({
+      dressStyle: "All",
+      colors: null,
+      size: null,
+      priceRange: [0, 500],
+    });
+  };
+  
+  const hasActiveFilters = () => {
+    return (
+      activeFilters.dressStyle !== "All" ||
+      activeFilters.colors !== null ||
+      activeFilters.size !== null ||
+      activeFilters.priceRange[0] > 0 ||
+      activeFilters.priceRange[1] < 500
+    );
+  };
+  
   return (
     <div className={cn("w-full", className)}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium text-lg">Filters</h3>
-        <SlidersHorizontal size={18} className="text-gray-500" />
+        <div className="flex items-center">
+          {hasActiveFilters() && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={clearAllFilters}
+              className="mr-2 text-xs"
+            >
+              <X size={14} className="mr-1" />
+              Clear All
+            </Button>
+          )}
+          <SlidersHorizontal size={18} className="text-muted-foreground" />
+        </div>
       </div>
       
       {/* Categories */}
@@ -88,49 +120,49 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('categories')}
         >
           <span className="font-medium">Categories</span>
-          {filters.categories.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+          {filters.categories.open ? <ChevronUp size={18} className="text-muted-foreground" /> : <ChevronDown size={18} className="text-muted-foreground" />}
         </button>
         
         {filters.categories.open && (
           <div className="py-2">
             <button 
-              className="filter-item"
+              className="filter-item pl-2"
               onClick={() => {}}
             >
               <span className="font-medium">T-shirts</span>
-              <ChevronDown size={18} className="text-gray-500" />
+              <ChevronDown size={18} className="text-muted-foreground" />
             </button>
             
             <button 
-              className="filter-item"
+              className="filter-item pl-2"
               onClick={() => {}}
             >
               <span className="font-medium">Shorts</span>
-              <ChevronDown size={18} className="text-gray-500" />
+              <ChevronDown size={18} className="text-muted-foreground" />
             </button>
             
             <button 
-              className="filter-item"
+              className="filter-item pl-2"
               onClick={() => {}}
             >
               <span className="font-medium">Shirts</span>
-              <ChevronDown size={18} className="text-gray-500" />
+              <ChevronDown size={18} className="text-muted-foreground" />
             </button>
             
             <button 
-              className="filter-item"
+              className="filter-item pl-2"
               onClick={() => {}}
             >
               <span className="font-medium">Hoodie</span>
-              <ChevronDown size={18} className="text-gray-500" />
+              <ChevronDown size={18} className="text-muted-foreground" />
             </button>
             
             <button 
-              className="filter-item"
+              className="filter-item pl-2"
               onClick={() => {}}
             >
               <span className="font-medium">Jeans</span>
-              <ChevronDown size={18} className="text-gray-500" />
+              <ChevronDown size={18} className="text-muted-foreground" />
             </button>
           </div>
         )}
@@ -143,7 +175,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('price')}
         >
           <span className="font-medium">Price</span>
-          {filters.price.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+          {filters.price.open ? <ChevronUp size={18} className="text-muted-foreground" /> : <ChevronDown size={18} className="text-muted-foreground" />}
         </button>
         
         {filters.price.open && (
@@ -171,7 +203,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('colors')}
         >
           <span className="font-medium">Colors</span>
-          {filters.colors.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+          {filters.colors.open ? <ChevronUp size={18} className="text-muted-foreground" /> : <ChevronDown size={18} className="text-muted-foreground" />}
         </button>
         
         {filters.colors.open && (
@@ -196,7 +228,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('size')}
         >
           <span className="font-medium">Size</span>
-          {filters.size.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+          {filters.size.open ? <ChevronUp size={18} className="text-muted-foreground" /> : <ChevronDown size={18} className="text-muted-foreground" />}
         </button>
         
         {filters.size.open && (
@@ -221,7 +253,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
           onClick={() => toggleSection('dressStyle')}
         >
           <span className="font-medium">Dress Style</span>
-          {filters.dressStyle.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
+          {filters.dressStyle.open ? <ChevronUp size={18} className="text-muted-foreground" /> : <ChevronDown size={18} className="text-muted-foreground" />}
         </button>
         
         {filters.dressStyle.open && (
@@ -229,11 +261,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             {dressStyles.map(style => (
               <button 
                 key={style}
-                className={`filter-item ${activeFilters.dressStyle === style ? 'font-bold' : ''}`}
+                className={`filter-item pl-2 ${activeFilters.dressStyle === style ? 'font-bold' : ''}`}
                 onClick={() => handleSelectDressStyle(style)}
               >
                 <span className="font-medium">{style}</span>
-                {activeFilters.dressStyle === style && <span className="text-xs bg-black text-white px-1.5 py-0.5 rounded">Selected</span>}
+                {activeFilters.dressStyle === style && <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">Selected</span>}
               </button>
             ))}
           </div>
@@ -242,7 +274,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       
       {/* Apply Filter Button */}
       <Button 
-        className="w-full bg-black text-white rounded-full py-3 font-medium"
+        className="w-full bg-primary text-primary-foreground rounded-full py-3 font-medium"
         onClick={handleApplyFilter}
       >
         Apply Filter
