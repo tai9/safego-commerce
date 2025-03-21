@@ -1,18 +1,22 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isSignedIn } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +35,14 @@ const Navbar = () => {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+    }
+  };
   
   return (
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${isScrolled ? "bg-white shadow-sm" : "bg-white"}`}>
@@ -78,16 +90,20 @@ const Navbar = () => {
         </nav>
         
         {/* Search bar */}
-        <div className="hidden md:flex flex-1 max-w-md mx-4">
+        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-4">
           <div className="relative w-full">
             <Input 
               type="search" 
               placeholder="Search for products..." 
               className="w-full bg-secondary border-none rounded-full pl-12 py-6 h-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+            <button type="submit" className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+              <Search size={18} />
+            </button>
           </div>
-        </div>
+        </form>
         
         {/* Actions */}
         <div className="flex items-center space-x-3">
@@ -106,9 +122,20 @@ const Navbar = () => {
             </span>
           </Link>
           
-          <Link to="/account" className="p-1 hidden md:block" aria-label="Account">
-            <User size={20} />
-          </Link>
+          {isSignedIn ? (
+            <div className="p-1">
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          ) : (
+            <div className="hidden md:flex items-center space-x-2">
+              <SignInButton mode="modal">
+                <Button variant="ghost" size="sm">Sign In</Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button size="sm">Sign Up</Button>
+              </SignUpButton>
+            </div>
+          )}
         </div>
       </div>
       
@@ -154,28 +181,51 @@ const Navbar = () => {
           >
             Brands
           </Link>
-          <Link 
-            to="/account" 
-            className="block py-2 border-b border-gray-100 text-lg font-medium"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Account
-          </Link>
+          {isSignedIn ? (
+            <Link 
+              to="/profile" 
+              className="block py-2 border-b border-gray-100 text-lg font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Profile
+            </Link>
+          ) : (
+            <>
+              <div className="py-2 border-b border-gray-100">
+                <SignInButton mode="modal">
+                  <Button variant="ghost" className="w-full justify-start p-0 h-auto text-lg font-medium">
+                    Sign In
+                  </Button>
+                </SignInButton>
+              </div>
+              <div className="py-2 border-b border-gray-100">
+                <SignUpButton mode="modal">
+                  <Button variant="ghost" className="w-full justify-start p-0 h-auto text-lg font-medium">
+                    Sign Up
+                  </Button>
+                </SignUpButton>
+              </div>
+            </>
+          )}
         </nav>
       </div>
       
       {/* Mobile Search Dialog */}
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
         <DialogContent className="p-0 max-w-md w-[95%] rounded-lg">
-          <div className="relative p-4">
+          <form onSubmit={handleSearch} className="relative p-4">
             <Input 
               type="search" 
               placeholder="Search for products..." 
               className="w-full border rounded-full pl-12 py-6 h-12"
               autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Search className="absolute left-8 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
-          </div>
+            <button type="submit" className="absolute left-8 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+              <Search size={18} />
+            </button>
+          </form>
         </DialogContent>
       </Dialog>
     </header>
