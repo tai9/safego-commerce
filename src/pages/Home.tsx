@@ -1,8 +1,10 @@
+
 import { Link } from "react-router-dom";
 import Announcement from "@/components/layout/Announcement";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/ui/ProductCard";
+import ProductCarousel from "@/components/ui/ProductCarousel";
 import { products } from "@/data/products";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
@@ -105,10 +107,18 @@ const Home = () => {
               </Link>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="md:grid md:grid-cols-4 md:gap-6 hidden">
               {newArrivals.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+            
+            <div className="md:hidden">
+              <ProductCarousel 
+                products={newArrivals} 
+                title="NEW ARRIVALS" 
+                viewAllLink="/products" 
+              />
             </div>
           </div>
         </section>
@@ -123,10 +133,18 @@ const Home = () => {
               </Link>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="md:grid md:grid-cols-4 md:gap-6 hidden">
               {topSelling.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+            
+            <div className="md:hidden">
+              <ProductCarousel 
+                products={topSelling} 
+                title="TOP SELLING" 
+                viewAllLink="/products" 
+              />
             </div>
           </div>
         </section>
@@ -138,7 +156,7 @@ const Home = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link to="/products?style=casual" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
+                <Link to="/products?category=Casual" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
                   <img 
                     src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80" 
                     alt="Casual style" 
@@ -149,7 +167,7 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/products?style=formal" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
+                <Link to="/products?category=Formal" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
                   <img 
                     src="https://images.unsplash.com/photo-1604693618981-f0fe11e5ce6c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80" 
                     alt="Formal style" 
@@ -162,7 +180,7 @@ const Home = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link to="/products?style=party" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
+                <Link to="/products?category=Party" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
                   <img 
                     src="https://images.unsplash.com/photo-1522198734915-76c764a8454d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80" 
                     alt="Party style" 
@@ -173,7 +191,7 @@ const Home = () => {
                   </div>
                 </Link>
                 
-                <Link to="/products?style=gym" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
+                <Link to="/products?category=Gym" className="rounded-lg overflow-hidden relative bg-gray-100 aspect-[4/3] hover:opacity-90 transition-opacity">
                   <img 
                     src="https://images.unsplash.com/photo-1584466977773-e625c37cdd50?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1587&q=80" 
                     alt="Gym style" 

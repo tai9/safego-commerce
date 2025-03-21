@@ -16,21 +16,58 @@ const Products = () => {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [sortOption, setSortOption] = useState("Most Popular");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    dressStyle: "",
+    colors: null,
+    size: null,
+    priceRange: [0, 500],
+  });
+  
   const location = useLocation();
   const isMobile = useIsMobile();
   
   // Parse category from URL
-  const categoryParam = new URLSearchParams(location.search).get('category') || 'Casual';
+  const categoryParam = new URLSearchParams(location.search).get('category') || '';
+  
+  useEffect(() => {
+    if (categoryParam) {
+      setActiveFilters(prev => ({...prev, dressStyle: categoryParam}));
+    }
+  }, [categoryParam]);
   
   // Get filtered products
-  const filteredProducts = products.filter(product => 
-    product.dressStyle.includes(categoryParam)
-  );
+  const filteredProducts = products.filter(product => {
+    // Filter by dress style if selected
+    if (activeFilters.dressStyle && !product.dressStyle.includes(activeFilters.dressStyle)) {
+      return false;
+    }
+    
+    // Filter by color if selected
+    if (activeFilters.colors && !product.colors.includes(activeFilters.colors)) {
+      return false;
+    }
+    
+    // Filter by size if selected
+    if (activeFilters.size && !product.sizes.includes(activeFilters.size)) {
+      return false;
+    }
+    
+    // Filter by price range
+    if (product.price < activeFilters.priceRange[0] || product.price > activeFilters.priceRange[1]) {
+      return false;
+    }
+    
+    return true;
+  });
   
   // Reset scroll position when entering the page
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleFilterChange = (newFilters) => {
+    setActiveFilters(prev => ({...prev, ...newFilters}));
+  };
   
   const sortOptions = ["Most Popular", "Newest", "Price: Low to High", "Price: High to Low", "Customer Rating"];
   
@@ -45,13 +82,13 @@ const Products = () => {
           <div className="flex text-sm items-center">
             <Link to="/" className="text-gray-500 hover:text-black">Home</Link>
             <span className="mx-2 text-gray-400">&gt;</span>
-            <span className="font-medium">{categoryParam}</span>
+            <span className="font-medium">{activeFilters.dressStyle || "All Products"}</span>
           </div>
         </div>
         
         <div className="container mx-auto px-4 pb-16">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold">{categoryParam}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">{activeFilters.dressStyle || "All Products"}</h1>
             
             {/* Sort and Filter Controls */}
             <div className="flex items-center space-x-2">
@@ -116,7 +153,10 @@ const Products = () => {
           <div className="flex flex-col md:flex-row gap-8">
             {/* Sidebar - Desktop Only */}
             <div className="hidden md:block w-64 flex-shrink-0">
-              <FilterSidebar />
+              <FilterSidebar 
+                activeFilters={activeFilters}
+                onFilterChange={handleFilterChange}
+              />
             </div>
             
             {/* Product Grid */}
@@ -161,7 +201,12 @@ const Products = () => {
       </main>
       
       {/* Mobile Filter Dialog */}
-      <MobileFilter isOpen={mobileFilterOpen} onClose={() => setMobileFilterOpen(false)} />
+      <MobileFilter 
+        isOpen={mobileFilterOpen} 
+        onClose={() => setMobileFilterOpen(false)}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      />
       
       <Footer />
     </div>

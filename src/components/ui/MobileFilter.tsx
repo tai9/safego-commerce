@@ -7,9 +7,25 @@ import { Button } from "@/components/ui/button";
 interface MobileFilterProps {
   isOpen: boolean;
   onClose: () => void;
+  activeFilters: {
+    dressStyle: string;
+    colors: string | null;
+    size: string | null;
+    priceRange: number[];
+  };
+  onFilterChange: (filters: any) => void;
 }
 
-const MobileFilter: React.FC<MobileFilterProps> = ({ isOpen, onClose }) => {
+const MobileFilter: React.FC<MobileFilterProps> = ({ 
+  isOpen, 
+  onClose, 
+  activeFilters, 
+  onFilterChange 
+}) => {
+  const handleFilterChange = (filters) => {
+    onFilterChange(filters);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] p-0 h-[90vh] max-h-[900px] overflow-auto">
@@ -21,7 +37,10 @@ const MobileFilter: React.FC<MobileFilterProps> = ({ isOpen, onClose }) => {
         </div>
         
         <div className="p-4">
-          <FilterSidebar />
+          <FilterSidebar 
+            activeFilters={activeFilters}
+            onFilterChange={handleFilterChange}
+          />
         </div>
       </DialogContent>
     </Dialog>

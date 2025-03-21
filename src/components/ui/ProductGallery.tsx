@@ -10,19 +10,22 @@ interface ProductGalleryProps {
 const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) => {
   const [activeImage, setActiveImage] = useState(0);
 
+  // Ensure we have unique images by creating a Set
+  const uniqueImages = [...new Set(images)];
+
   const handlePrev = () => {
-    setActiveImage((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setActiveImage((prev) => (prev === 0 ? uniqueImages.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setActiveImage((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setActiveImage((prev) => (prev === uniqueImages.length - 1 ? 0 : prev + 1));
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
       {/* Thumbnails - Vertical on desktop, hidden on mobile */}
       <div className="hidden md:flex flex-col gap-3 order-1">
-        {images.map((image, index) => (
+        {uniqueImages.map((image, index) => (
           <button
             key={index}
             className={`border rounded-md overflow-hidden aspect-square ${
@@ -43,7 +46,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) => {
       <div className="md:col-span-4 relative aspect-square md:aspect-auto order-2">
         <div className="relative h-full">
           <img
-            src={images[activeImage]}
+            src={uniqueImages[activeImage]}
             alt={name}
             className="w-full h-full object-cover object-center rounded-md animate-fade-in"
           />
@@ -68,7 +71,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) => {
 
       {/* Thumbnails - Horizontal on mobile only */}
       <div className="flex gap-2 overflow-x-auto md:hidden order-3 py-2">
-        {images.map((image, index) => (
+        {uniqueImages.map((image, index) => (
           <button
             key={index}
             className={`border flex-shrink-0 rounded-md overflow-hidden w-16 aspect-square ${

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronUp, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -7,10 +7,21 @@ import { Button } from "@/components/ui/button";
 
 interface FilterSidebarProps {
   className?: string;
+  activeFilters: {
+    dressStyle: string;
+    colors: string | null;
+    size: string | null;
+    priceRange: number[];
+  };
+  onFilterChange: (filters: any) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
-  const [priceRange, setPriceRange] = useState([50, 200]);
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ 
+  className, 
+  activeFilters, 
+  onFilterChange 
+}) => {
+  const [priceRange, setPriceRange] = useState(activeFilters.priceRange);
   const [filters, setFilters] = useState({
     categories: { open: true },
     price: { open: true },
@@ -19,9 +30,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
     dressStyle: { open: true }
   });
   
-  // Selected filters state
-  const [selectedColor, setSelectedColor] = useState<string | null>("blue");
-  const [selectedSize, setSelectedSize] = useState<string | null>("Large");
+  // Update local state when props change
+  useEffect(() => {
+    setPriceRange(activeFilters.priceRange);
+  }, [activeFilters.priceRange]);
   
   const colors = [
     { name: "green", value: "#22c55e" },
@@ -37,12 +49,29 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
   ];
   
   const sizes = ["XX-Small", "X-Small", "Small", "Medium", "Large", "X-Large", "XX-Large", "3X-Large", "4X-Large"];
+  const dressStyles = ["Casual", "Formal", "Party", "Gym"];
   
   const toggleSection = (section: keyof typeof filters) => {
     setFilters(prev => ({
       ...prev,
       [section]: { ...prev[section], open: !prev[section].open }
     }));
+  };
+  
+  const handleApplyFilter = () => {
+    onFilterChange({ priceRange });
+  };
+  
+  const handleSelectColor = (color: string) => {
+    onFilterChange({ colors: activeFilters.colors === color ? null : color });
+  };
+  
+  const handleSelectSize = (size: string) => {
+    onFilterChange({ size: activeFilters.size === size ? null : size });
+  };
+  
+  const handleSelectDressStyle = (style: string) => {
+    onFilterChange({ dressStyle: style });
   };
   
   return (
@@ -58,41 +87,53 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
           className="filter-item"
           onClick={() => toggleSection('categories')}
         >
-          <span className="font-medium">T-shirts</span>
-          <ChevronDown size={18} className="text-gray-500" />
+          <span className="font-medium">Categories</span>
+          {filters.categories.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
         </button>
         
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('categories')}
-        >
-          <span className="font-medium">Shorts</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
-        
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('categories')}
-        >
-          <span className="font-medium">Shirts</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
-        
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('categories')}
-        >
-          <span className="font-medium">Hoodie</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
-        
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('categories')}
-        >
-          <span className="font-medium">Jeans</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
+        {filters.categories.open && (
+          <div className="py-2">
+            <button 
+              className="filter-item"
+              onClick={() => {}}
+            >
+              <span className="font-medium">T-shirts</span>
+              <ChevronDown size={18} className="text-gray-500" />
+            </button>
+            
+            <button 
+              className="filter-item"
+              onClick={() => {}}
+            >
+              <span className="font-medium">Shorts</span>
+              <ChevronDown size={18} className="text-gray-500" />
+            </button>
+            
+            <button 
+              className="filter-item"
+              onClick={() => {}}
+            >
+              <span className="font-medium">Shirts</span>
+              <ChevronDown size={18} className="text-gray-500" />
+            </button>
+            
+            <button 
+              className="filter-item"
+              onClick={() => {}}
+            >
+              <span className="font-medium">Hoodie</span>
+              <ChevronDown size={18} className="text-gray-500" />
+            </button>
+            
+            <button 
+              className="filter-item"
+              onClick={() => {}}
+            >
+              <span className="font-medium">Jeans</span>
+              <ChevronDown size={18} className="text-gray-500" />
+            </button>
+          </div>
+        )}
       </div>
       
       {/* Price Range */}
@@ -138,9 +179,9 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
             {colors.map((color) => (
               <button
                 key={color.name}
-                className={`color-selector ${selectedColor === color.name ? 'active' : ''}`}
+                className={`color-selector ${activeFilters.colors === color.name ? 'active' : ''}`}
                 style={{ backgroundColor: color.value }}
-                onClick={() => setSelectedColor(selectedColor === color.name ? null : color.name)}
+                onClick={() => handleSelectColor(color.name)}
                 aria-label={`Select ${color.name} color`}
               />
             ))}
@@ -163,8 +204,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
             {sizes.map((size) => (
               <button
                 key={size}
-                className={`size-selector ${selectedSize === size ? 'active' : ''}`}
-                onClick={() => setSelectedSize(selectedSize === size ? null : size)}
+                className={`size-selector ${activeFilters.size === size ? 'active' : ''}`}
+                onClick={() => handleSelectSize(size)}
               >
                 {size}
               </button>
@@ -183,41 +224,27 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ className }) => {
           {filters.dressStyle.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
         </button>
         
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('dressStyle')}
-        >
-          <span className="font-medium">Casual</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
-        
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('dressStyle')}
-        >
-          <span className="font-medium">Formal</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
-        
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('dressStyle')}
-        >
-          <span className="font-medium">Party</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
-        
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('dressStyle')}
-        >
-          <span className="font-medium">Gym</span>
-          <ChevronDown size={18} className="text-gray-500" />
-        </button>
+        {filters.dressStyle.open && (
+          <div className="py-2">
+            {dressStyles.map(style => (
+              <button 
+                key={style}
+                className={`filter-item ${activeFilters.dressStyle === style ? 'font-bold' : ''}`}
+                onClick={() => handleSelectDressStyle(style)}
+              >
+                <span className="font-medium">{style}</span>
+                {activeFilters.dressStyle === style && <span className="text-xs bg-black text-white px-1.5 py-0.5 rounded">Selected</span>}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       
       {/* Apply Filter Button */}
-      <Button className="w-full bg-black text-white rounded-full py-3 font-medium">
+      <Button 
+        className="w-full bg-black text-white rounded-full py-3 font-medium"
+        onClick={handleApplyFilter}
+      >
         Apply Filter
       </Button>
     </div>
