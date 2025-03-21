@@ -1,11 +1,10 @@
-
 import { Link } from "react-router-dom";
 import Announcement from "@/components/layout/Announcement";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/ui/ProductCard";
 import { products } from "@/data/products";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const Home = () => {
   // Get a subset of products for different sections
