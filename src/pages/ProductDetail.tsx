@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Star, Plus, Minus, ChevronDown, ChevronUp, CheckCircle2, SlidersHorizontal } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { products, reviewsData } from "@/data/products";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
@@ -74,9 +75,14 @@ const ProductDetail = () => {
       title: "Added to cart",
       description: `${quantity} × ${product.name} added to your cart`,
       action: (
-        <Link to="/cart" className="bg-primary text-white px-3 py-1 rounded-md text-xs">
+        <Button 
+          onClick={() => navigate('/cart')} 
+          variant="default" 
+          size="sm"
+          className="bg-primary text-white px-3 py-1 rounded-md text-xs"
+        >
           View Cart
-        </Link>
+        </Button>
       ),
     });
   };
