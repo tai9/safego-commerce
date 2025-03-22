@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Star, Plus, Minus, ChevronDown, ChevronUp, CheckCircle2, SlidersHorizontal } from "lucide-react";
+import { Star, Plus, Minus, ChevronDown, CheckCircle2, SlidersHorizontal } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +10,9 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/ui/ProductCard";
 import ProductGallery from "@/components/ui/ProductGallery";
-import ReviewCard from "@/components/ui/ReviewCard";
+import ProductReviews from "@/components/ui/product-reviews";
+import ProductFAQ from "@/components/ui/product-faq";
+import ScrollToTop from "@/components/ui/scroll-to-top";
 import { products, reviewsData } from "@/data/products";
 
 const ProductDetail = () => {
@@ -94,26 +97,70 @@ const ProductDetail = () => {
     'gray': '#9ca3af',
     'brown': '#92400e',
   };
+
+  // Sample FAQs data
+  const faqs = [
+    {
+      question: "What sizes are available?",
+      answer: "We offer sizes ranging from XS to 3XL. Please refer to our size guide to find your perfect fit."
+    },
+    {
+      question: "How do I care for this product?",
+      answer: "Machine wash cold with similar colors. Tumble dry low. Do not bleach. Iron if needed on low heat."
+    },
+    {
+      question: "What is your return policy?",
+      answer: "We offer free returns within 30 days of purchase. Items must be unworn and in original packaging."
+    },
+    {
+      question: "How long does shipping take?",
+      answer: "Orders are typically processed within 1-2 business days. Standard shipping takes 3-5 business days, while express shipping takes 1-2 business days."
+    },
+    {
+      question: "Do you ship internationally?",
+      answer: "Yes, we ship to most countries worldwide. International shipping typically takes 7-14 business days depending on your location."
+    }
+  ];
+
+  // Convert product ratings for the review component
+  const ratings = [
+    { stars: 5, count: Math.round(reviewsData.filter(r => r.rating === 5).length) },
+    { stars: 4, count: Math.round(reviewsData.filter(r => r.rating === 4).length) },
+    { stars: 3, count: Math.round(reviewsData.filter(r => r.rating === 3).length) },
+    { stars: 2, count: Math.round(reviewsData.filter(r => r.rating === 2).length) },
+    { stars: 1, count: Math.round(reviewsData.filter(r => r.rating === 1).length) }
+  ];
+  
+  // Prepare reviews data for the review component
+  const reviews = reviewsData.map(review => ({
+    id: review.id,
+    customerName: review.name,
+    rating: review.rating,
+    date: review.date,
+    comment: review.comment,
+    helpful: 0,
+    verified: review.verified
+  }));
   
   if (!product) {
     return <div>Product not found</div>;
   }
   
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen dark:bg-gray-900">
       <Announcement />
       <Navbar />
       
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex text-sm items-center">
-            <Link to="/" className="text-gray-500 hover:text-black">Home</Link>
+          <div className="flex text-sm items-center dark:text-gray-300">
+            <Link to="/" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white">Home</Link>
             <span className="mx-2 text-gray-400">&gt;</span>
-            <Link to="/products" className="text-gray-500 hover:text-black">Shop</Link>
+            <Link to="/products" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white">Shop</Link>
             <span className="mx-2 text-gray-400">&gt;</span>
-            <Link to={`/products?category=${product.category}`} className="text-gray-500 hover:text-black">{product.category}</Link>
+            <Link to={`/products?category=${product.category}`} className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white">{product.category}</Link>
             <span className="mx-2 text-gray-400">&gt;</span>
-            <span className="font-medium">{product.name}</span>
+            <span className="font-medium dark:text-gray-200">{product.name}</span>
           </div>
         </div>
         
@@ -123,7 +170,7 @@ const ProductDetail = () => {
               <ProductGallery images={[...product.images, ...product.images]} name={product.name} />
             </div>
             
-            <div>
+            <div className="dark:text-white">
               <h1 className="text-2xl md:text-4xl font-bold mb-2">{product.name.toUpperCase()}</h1>
               
               <div className="flex items-center mb-4">
@@ -132,11 +179,11 @@ const ProductDetail = () => {
                     <Star
                       key={i}
                       size={16}
-                      className={i < Math.floor(product.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
+                      className={i < Math.floor(product.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300 dark:text-gray-600"}
                     />
                   ))}
                 </div>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
                   {product.rating}/5 ({product.reviews} reviews)
                 </span>
               </div>
@@ -151,7 +198,7 @@ const ProductDetail = () => {
                 )}
               </div>
               
-              <p className="text-gray-600 mb-8">
+              <p className="text-gray-600 dark:text-gray-300 mb-8">
                 {product.description}
               </p>
               
@@ -161,7 +208,7 @@ const ProductDetail = () => {
                   {product.colors.map(color => (
                     <button
                       key={color}
-                      className={`color-selector ${selectedColor === color ? 'active' : ''}`}
+                      className={`w-8 h-8 rounded-full border-2 ${selectedColor === color ? 'border-black dark:border-white' : 'border-transparent'}`}
                       style={{ backgroundColor: colorMap[color] || color }}
                       onClick={() => setSelectedColor(color)}
                       aria-label={`Select ${color} color`}
@@ -176,7 +223,9 @@ const ProductDetail = () => {
                   {product.sizes.map(size => (
                     <button
                       key={size}
-                      className={`size-selector ${selectedSize === size ? 'active' : ''}`}
+                      className={`size-btn ${selectedSize === size 
+                        ? 'bg-black text-white dark:bg-white dark:text-black' 
+                        : 'bg-white text-black border-gray-300 dark:bg-gray-800 dark:text-white dark:border-gray-700'}`}
                       onClick={() => setSelectedSize(size)}
                     >
                       {size}
@@ -186,11 +235,11 @@ const ProductDetail = () => {
               </div>
               
               <div className="flex items-center mb-8">
-                <div className="quantity-input mr-4">
+                <div className="quantity-input mr-4 flex items-center border border-gray-300 dark:border-gray-700 rounded">
                   <button 
                     onClick={decreaseQuantity}
                     aria-label="Decrease quantity"
-                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
+                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
                   >
                     <Minus size={16} />
                   </button>
@@ -198,7 +247,7 @@ const ProductDetail = () => {
                   <button 
                     onClick={increaseQuantity}
                     aria-label="Increase quantity"
-                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
+                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
                   >
                     <Plus size={16} />
                   </button>
@@ -206,13 +255,13 @@ const ProductDetail = () => {
                 
                 <Button 
                   onClick={addToCart}
-                  className="flex-1 bg-black text-white rounded-full py-3 font-medium hover:bg-black/90 transition-colors"
+                  className="flex-1 bg-black dark:bg-white dark:text-black text-white rounded-full py-3 font-medium hover:bg-black/90 dark:hover:bg-white/90 transition-colors"
                 >
                   Add to Cart
                 </Button>
               </div>
               
-              <div className="space-y-4 border-t border-gray-200 pt-6">
+              <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-6">
                 <div className="flex items-center text-sm">
                   <CheckCircle2 size={16} className="mr-2 text-green-500" />
                   <span>Free shipping on orders over $50</span>
@@ -230,7 +279,7 @@ const ProductDetail = () => {
           </div>
           
           <div className="mb-16">
-            <Tabs defaultValue="reviews">
+            <Tabs defaultValue="details">
               <div className="border-b border-gray-200 dark:border-gray-700">
                 <TabsList className="flex w-full bg-transparent justify-center md:justify-start">
                   <TabsTrigger 
@@ -256,21 +305,21 @@ const ProductDetail = () => {
               
               <TabsContent value="details" className="py-6">
                 <div className="max-w-3xl mx-auto">
-                  <h3 className="text-xl font-bold mb-4">Product Information</h3>
-                  <p className="text-gray-600 mb-6">
+                  <h3 className="text-xl font-bold mb-4 dark:text-white">Product Information</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">
                     {product.description}
                   </p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-medium mb-2">Materials</h4>
-                      <p className="text-gray-600">
+                      <h4 className="font-medium mb-2 dark:text-white">Materials</h4>
+                      <p className="text-gray-600 dark:text-gray-300">
                         Our products are crafted from premium, sustainable materials to ensure comfort and durability.
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-medium mb-2">Care Instructions</h4>
-                      <p className="text-gray-600">
+                      <h4 className="font-medium mb-2 dark:text-white">Care Instructions</h4>
+                      <p className="text-gray-600 dark:text-gray-300">
                         Machine wash cold with similar colors. Tumble dry low. Do not bleach. Iron if needed on low heat.
                       </p>
                     </div>
@@ -281,13 +330,13 @@ const ProductDetail = () => {
               <TabsContent value="reviews" className="py-6">
                 <div className="max-w-4xl mx-auto">
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold dark:text-white">All Reviews <span className="text-gray-500 dark:text-gray-400 font-normal">({reviewsData.length})</span></h3>
+                    <h3 className="text-xl font-bold dark:text-white">All Reviews <span className="text-gray-500 dark:text-gray-400 font-normal">({reviews.length})</span></h3>
                     
                     <div className="flex items-center space-x-3">
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="border rounded-md flex items-center px-3"
+                        className="border rounded-md flex items-center px-3 dark:border-gray-700 dark:text-gray-200"
                       >
                         <SlidersHorizontal size={16} className="mr-2" />
                         Latest
@@ -300,92 +349,23 @@ const ProductDetail = () => {
                     </div>
                   </div>
                   
-                  <div className="space-y-6">
-                    {reviewsData.map((review) => (
-                      <ReviewCard
-                        key={review.id}
-                        name={review.name}
-                        rating={review.rating}
-                        date={review.date}
-                        comment={review.comment}
-                        verified={review.verified}
-                      />
-                    ))}
-                  </div>
-                  
-                  <div className="text-center mt-8">
-                    <Button variant="outline" className="px-6 py-2 rounded-md">
-                      Load More Reviews
-                    </Button>
-                  </div>
+                  <ProductReviews
+                    overallRating={product.rating}
+                    totalReviews={reviews.length}
+                    ratings={ratings}
+                    reviews={reviews}
+                  />
                 </div>
               </TabsContent>
               
               <TabsContent value="faqs" className="py-6">
-                <div className="max-w-3xl mx-auto">
-                  <h3 className="text-xl font-bold mb-6">Frequently Asked Questions</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>What sizes are available?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                      <div className="mt-2 text-gray-600">
-                        We offer sizes ranging from XS to 3XL. Please refer to our size guide to find your perfect fit.
-                      </div>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>How do I care for this product?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>What is your return policy?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>How long does shipping take?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>Do you ship internationally?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <ProductFAQ faqs={faqs} />
               </TabsContent>
             </Tabs>
           </div>
           
           <div className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">YOU MIGHT ALSO LIKE</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center dark:text-white">YOU MIGHT ALSO LIKE</h2>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {relatedProducts.map((product) => (
@@ -397,6 +377,23 @@ const ProductDetail = () => {
       </main>
       
       <Footer />
+      <ScrollToTop />
+
+      <style jsx>{`
+        .size-btn {
+          min-width: 40px;
+          height: 40px;
+          border: 1px solid;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          font-weight: 500;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+      `}</style>
     </div>
   );
 };

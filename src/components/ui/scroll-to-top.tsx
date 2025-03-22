@@ -3,44 +3,43 @@ import { useState, useEffect } from "react";
 import { ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface ScrollToTopProps {
-  threshold?: number;
-  className?: string;
-}
+const ScrollToTop = () => {
+  const [isVisible, setIsVisible] = useState(false);
 
-const ScrollToTop: React.FC<ScrollToTopProps> = ({ 
-  threshold = 300,
-  className = "fixed bottom-6 right-6 rounded-full w-12 h-12 bg-primary text-primary-foreground shadow-lg z-50"
-}) => {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > threshold);
-    };
-    
-    window.addEventListener("scroll", handleScroll);
-    
-    // Check position on component mount
-    handleScroll();
-    
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [threshold]);
-  
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  // Show button when page is scrolled down
+  const toggleVisibility = () => {
+    if (window.scrollY > 300) {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
+    }
   };
-  
-  if (!showScrollTop) return null;
-  
+
+  // Set the top scroll listener
+  useEffect(() => {
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  // Scroll to top smoothly
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <Button
-      className={className}
-      onClick={scrollToTop}
-      aria-label="Scroll to top"
-    >
-      <ChevronUp size={24} />
-    </Button>
+    <>
+      {isVisible && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-50 p-2 rounded-full bg-black dark:bg-white dark:text-black text-white shadow-lg hover:bg-black/90 dark:hover:bg-white/90 transition-all duration-300"
+        >
+          <ChevronUp size={24} />
+        </Button>
+      )}
+    </>
   );
 };
 
