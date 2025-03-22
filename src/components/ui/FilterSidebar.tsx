@@ -75,6 +75,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
   
   const clearAllFilters = () => {
+    // Reset price range locally
+    setPriceRange([0, 500]);
+    
+    // Reset all filters 
     onFilterChange({
       dressStyle: "All",
       colors: null,

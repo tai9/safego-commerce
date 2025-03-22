@@ -25,6 +25,7 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.75rem;
+    --discount: 0 84.2% 60.2%;
   }
  
   .dark {
@@ -47,6 +48,7 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    --discount: 355 90% 65%;
   }
 }
  
@@ -77,5 +79,17 @@
   
   .size-selector.active {
     @apply bg-primary text-primary-foreground;
+  }
+  
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+  
+  .product-card:hover img {
+    @apply scale-105;
+  }
+  
+  .glass-morphism {
+    @apply backdrop-blur-lg bg-background/80 border border-border shadow-lg;
   }
 }

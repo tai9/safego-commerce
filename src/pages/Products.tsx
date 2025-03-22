@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import Announcement from "@/components/layout/Announcement";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -11,6 +12,7 @@ import { products } from "@/data/products";
 import { ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownNarrowWide } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 const Products = () => {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -22,6 +24,8 @@ const Products = () => {
     size: null,
     priceRange: [0, 500],
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6;
   
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -60,6 +64,28 @@ const Products = () => {
     return true;
   });
   
+  // Apply sorting
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortOption) {
+      case "Price: Low to High":
+        return a.price - b.price;
+      case "Price: High to Low":
+        return b.price - a.price;
+      case "Newest":
+        return parseInt(b.id) - parseInt(a.id);
+      case "Customer Rating":
+        return b.rating - a.rating;
+      default: // Most Popular
+        return b.reviews - a.reviews;
+    }
+  });
+  
+  // Get current products for pagination
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+  
   // Reset scroll position when entering the page
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -67,12 +93,38 @@ const Products = () => {
   
   const handleFilterChange = (newFilters) => {
     setActiveFilters(prev => ({...prev, ...newFilters}));
+    setCurrentPage(1); // Reset to first page when filters change
   };
   
   const sortOptions = ["Most Popular", "Newest", "Price: Low to High", "Price: High to Low", "Customer Rating"];
   
+  const clearAllFilters = () => {
+    setActiveFilters({
+      dressStyle: "",
+      colors: null,
+      size: null,
+      priceRange: [0, 500],
+    });
+    setCurrentPage(1);
+  };
+  
+  const hasActiveFilters = () => {
+    return (
+      activeFilters.dressStyle !== "" ||
+      activeFilters.colors !== null ||
+      activeFilters.size !== null ||
+      activeFilters.priceRange[0] > 0 ||
+      activeFilters.priceRange[1] < 500
+    );
+  };
+  
   return (
     <div className="flex flex-col min-h-screen">
+      <Helmet>
+        <title>{activeFilters.dressStyle || "All Products"} | Safego Fashion</title>
+        <meta name="description" content={`Browse our collection of ${activeFilters.dressStyle || "fashion products"} at Safego.`} />
+      </Helmet>
+      
       <Announcement />
       <Navbar />
       
@@ -80,7 +132,7 @@ const Products = () => {
         {/* Breadcrumb */}
         <div className="container mx-auto px-4 py-4">
           <div className="flex text-sm items-center">
-            <Link to="/" className="text-gray-500 hover:text-black">Home</Link>
+            <Link to="/" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white">Home</Link>
             <span className="mx-2 text-gray-400">&gt;</span>
             <span className="font-medium">{activeFilters.dressStyle || "All Products"}</span>
           </div>
@@ -117,12 +169,12 @@ const Products = () => {
                 </Button>
                 
                 {sortDropdownOpen && (
-                  <div className="absolute right-0 mt-1 bg-white shadow-lg rounded-md z-20 min-w-[180px]">
+                  <div className="absolute right-0 mt-1 bg-background shadow-lg rounded-md z-20 min-w-[180px] border border-border">
                     <ul className="py-1">
                       {sortOptions.map((option) => (
                         <li key={option}>
                           <button
-                            className={`w-full text-left px-4 py-2 hover:bg-gray-100 ${
+                            className={`w-full text-left px-4 py-2 hover:bg-secondary ${
                               option === sortOption ? "font-medium" : ""
                             }`}
                             onClick={() => {
@@ -161,38 +213,89 @@ const Products = () => {
             
             {/* Product Grid */}
             <div className="flex-1">
-              <div className="text-sm text-gray-500 mb-6">
-                Showing 1-{filteredProducts.length} of {filteredProducts.length} Products
+              <div className="flex justify-between items-center mb-6">
+                <div className="text-sm text-muted-foreground">
+                  Showing {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, sortedProducts.length)} of {sortedProducts.length} Products
+                </div>
+                {hasActiveFilters() && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={clearAllFilters}
+                    className="text-sm"
+                  >
+                    <X size={14} className="mr-1" />
+                    Clear Filters
+                  </Button>
+                )}
               </div>
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                {filteredProducts.map((product) => (
+                {currentProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
               
               {/* Pagination */}
-              {filteredProducts.length > 0 && (
-                <div className="flex justify-center items-center mt-10">
-                  <button className="px-3 py-2 border rounded-md flex items-center text-sm mr-2 hover:bg-gray-50">
-                    <ChevronLeft size={16} className="mr-1" />
-                    Previous
-                  </button>
-                  
-                  <div className="flex space-x-1">
-                    <button className="w-8 h-8 flex items-center justify-center rounded-md bg-black text-white">1</button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100">2</button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100">3</button>
-                    <span className="w-8 h-8 flex items-center justify-center">...</span>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100">8</button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100">9</button>
-                    <button className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100">10</button>
-                  </div>
-                  
-                  <button className="px-3 py-2 border rounded-md flex items-center text-sm ml-2 hover:bg-gray-50">
-                    Next
-                    <ChevronRight size={16} className="ml-1" />
-                  </button>
+              {sortedProducts.length > 0 && (
+                <div className="flex justify-center mt-10">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
+                        let pageNumber;
+                        
+                        if (totalPages <= 5) {
+                          pageNumber = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNumber = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNumber = totalPages - 4 + i;
+                        } else {
+                          pageNumber = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <PaginationItem key={i}>
+                            <PaginationLink 
+                              isActive={currentPage === pageNumber}
+                              onClick={() => setCurrentPage(pageNumber)}
+                            >
+                              {pageNumber}
+                            </PaginationLink>
+                          </PaginationItem>
+                        );
+                      })}
+                      
+                      {totalPages > 5 && currentPage < totalPages - 2 && (
+                        <>
+                          <PaginationItem>
+                            <PaginationEllipsis />
+                          </PaginationItem>
+                          <PaginationItem>
+                            <PaginationLink 
+                              onClick={() => setCurrentPage(totalPages)}
+                            >
+                              {totalPages}
+                            </PaginationLink>
+                          </PaginationItem>
+                        </>
+                      )}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                          className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
                 </div>
               )}
             </div>

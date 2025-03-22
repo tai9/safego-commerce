@@ -28,9 +28,19 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       signUpFallbackRedirectUrl="/"
       signUpForceRedirectUrl="/"
       afterSignOutUrl="/"
+      appearance={{
+        variables: {
+          colorPrimary: 'var(--primary)',
+          colorBackground: 'var(--background)',
+          colorText: 'var(--foreground)',
+          colorInputText: 'var(--foreground)',
+          colorInputBackground: 'var(--background)',
+          colorTextSecondary: 'var(--muted-foreground)',
+        },
+      }}
     >
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="light">
+        <ThemeProvider defaultTheme="system" storageKey="safego-ui-theme">
           <App />
         </ThemeProvider>
       </QueryClientProvider>
