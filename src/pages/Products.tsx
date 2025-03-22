@@ -18,6 +18,12 @@ const Products = () => {
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [gridCols, setGridCols] = useState(4);
   const [sortBy, setSortBy] = useState("featured");
+  const [activeFilters, setActiveFilters] = useState({
+    dressStyle: "",
+    colors: "",
+    size: "",
+    priceRange: [0, 500],
+  });
   
   useEffect(() => {
     // Set initial grid cols based on screen size
@@ -33,6 +39,22 @@ const Products = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Update active filters when URL changes
+  useEffect(() => {
+    const categoryParam = searchParams.get("category") || "";
+    const minPriceParam = searchParams.get("minPrice");
+    const maxPriceParam = searchParams.get("maxPrice");
+    
+    setActiveFilters({
+      ...activeFilters,
+      dressStyle: categoryParam,
+      priceRange: [
+        minPriceParam ? parseInt(minPriceParam) : 0,
+        maxPriceParam ? parseInt(maxPriceParam) : 500,
+      ],
+    });
+  }, [searchParams]);
   
   const categoryParam = searchParams.get("category");
   const brandParam = searchParams.get("brand");
@@ -86,6 +108,14 @@ const Products = () => {
   const categories = [...new Set(products.map((p) => p.category))];
   const brands = [...new Set(["Nike", "Adidas", "Puma", "Under Armour", "New Balance"])];
   const maxPrice = Math.max(...products.map((p) => p.price));
+
+  // Handle filter changes
+  const handleFilterChange = (newFilters: any) => {
+    setActiveFilters({
+      ...activeFilters,
+      ...newFilters,
+    });
+  };
   
   return (
     <div className="flex flex-col min-h-screen dark:bg-gray-900">
@@ -109,7 +139,9 @@ const Products = () => {
               <FilterSidebar 
                 categories={categories} 
                 brands={brands} 
-                maxPrice={maxPrice} 
+                maxPrice={maxPrice}
+                activeFilters={activeFilters}
+                onFilterChange={handleFilterChange}
               />
             </aside>
             
@@ -191,6 +223,8 @@ const Products = () => {
             categories={categories} 
             brands={brands} 
             maxPrice={maxPrice}
+            activeFilters={activeFilters}
+            onFilterChange={handleFilterChange}
             className="px-4"
           />
         </MobileFilter>

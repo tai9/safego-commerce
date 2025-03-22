@@ -5,174 +5,265 @@ import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-interface FilterSidebarProps {
-  categories: string[];
-  brands: string[];
-  maxPrice: number;
+export interface FilterSidebarProps {
+  categories?: string[];
+  brands?: string[];
+  maxPrice?: number;
   className?: string;
+  activeFilters?: {
+    dressStyle?: string;
+    colors?: string | null;
+    size?: string | null;
+    priceRange?: number[];
+  };
+  onFilterChange?: (filters: any) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({
-  categories,
-  brands,
-  maxPrice,
-  className,
-}) => {
+const FilterSidebar = ({ 
+  categories = [], 
+  brands = [], 
+  maxPrice = 500,
+  className = "",
+  activeFilters,
+  onFilterChange
+}: FilterSidebarProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Initialize from URL params
-  const initialCategory = searchParams.get("category") || "";
-  const initialBrand = searchParams.get("brand") || "";
-  const initialPriceMin = searchParams.get("minPrice") ? parseInt(searchParams.get("minPrice") || "0") : 0;
-  const initialPriceMax = searchParams.get("maxPrice") ? parseInt(searchParams.get("maxPrice") || String(maxPrice)) : maxPrice;
+  // State for active filters
+  const [priceRange, setPriceRange] = useState<number[]>([0, maxPrice]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   
-  // Local state for filters
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    initialCategory ? [initialCategory] : []
-  );
-  const [selectedBrands, setSelectedBrands] = useState<string[]>(
-    initialBrand ? [initialBrand] : []
-  );
-  const [priceRange, setPriceRange] = useState<[number, number]>([
-    initialPriceMin,
-    initialPriceMax,
-  ]);
-  
-  // Update URL when filters change
+  // Initialize filters from URL or props
   useEffect(() => {
-    const newParams = new URLSearchParams(searchParams);
+    const categoryParam = searchParams.get("category") || "";
+    const minPriceParam = searchParams.get("minPrice");
+    const maxPriceParam = searchParams.get("maxPrice");
+    const brandParam = searchParams.get("brand");
     
-    // Update category params
-    if (selectedCategories.length) {
-      newParams.set("category", selectedCategories.join(","));
+    setSelectedCategory(categoryParam);
+    
+    if (minPriceParam && maxPriceParam) {
+      setPriceRange([parseInt(minPriceParam), parseInt(maxPriceParam)]);
     } else {
-      newParams.delete("category");
+      setPriceRange([0, maxPrice]);
     }
     
-    // Update brand params
-    if (selectedBrands.length) {
-      newParams.set("brand", selectedBrands.join(","));
+    if (brandParam) {
+      setSelectedBrands(brandParam.split(","));
     } else {
-      newParams.delete("brand");
+      setSelectedBrands([]);
+    }
+  }, [searchParams, maxPrice]);
+
+  // Initialize from activeFilters prop when available
+  useEffect(() => {
+    if (activeFilters) {
+      if (activeFilters.dressStyle) {
+        setSelectedCategory(activeFilters.dressStyle);
+      }
+      if (activeFilters.priceRange) {
+        setPriceRange(activeFilters.priceRange);
+      }
+    }
+  }, [activeFilters]);
+  
+  // Apply filters to URL
+  const applyFilters = () => {
+    const params = new URLSearchParams(searchParams);
+    
+    // Category filter
+    if (selectedCategory) {
+      params.set("category", selectedCategory);
+    } else {
+      params.delete("category");
     }
     
-    // Update price params
+    // Price range filter
     if (priceRange[0] > 0) {
-      newParams.set("minPrice", priceRange[0].toString());
+      params.set("minPrice", priceRange[0].toString());
     } else {
-      newParams.delete("minPrice");
+      params.delete("minPrice");
     }
     
     if (priceRange[1] < maxPrice) {
-      newParams.set("maxPrice", priceRange[1].toString());
+      params.set("maxPrice", priceRange[1].toString());
     } else {
-      newParams.delete("maxPrice");
+      params.delete("maxPrice");
     }
     
-    setSearchParams(newParams);
-  }, [selectedCategories, selectedBrands, priceRange]);
-  
-  const handleCategoryChange = (category: string, checked: boolean) => {
-    if (checked) {
-      setSelectedCategories([...selectedCategories, category]);
+    // Brand filter
+    if (selectedBrands.length > 0) {
+      params.set("brand", selectedBrands.join(","));
     } else {
-      setSelectedCategories(selectedCategories.filter((c) => c !== category));
+      params.delete("brand");
+    }
+    
+    setSearchParams(params);
+
+    // Call onFilterChange if provided
+    if (onFilterChange) {
+      onFilterChange({
+        dressStyle: selectedCategory,
+        priceRange,
+        // Add other filters as needed
+      });
     }
   };
   
-  const handleBrandChange = (brand: string, checked: boolean) => {
-    if (checked) {
-      setSelectedBrands([...selectedBrands, brand]);
-    } else {
-      setSelectedBrands(selectedBrands.filter((b) => b !== brand));
-    }
+  // Handle price range change
+  const handlePriceChange = (value: number[]) => {
+    setPriceRange(value);
   };
   
-  const handlePriceChange = (values: number[]) => {
-    setPriceRange([values[0], values[1]]);
+  // Handle category selection
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category === selectedCategory ? "" : category);
   };
   
-  const clearFilters = () => {
-    setSelectedCategories([]);
-    setSelectedBrands([]);
+  // Handle brand selection
+  const handleBrandChange = (brand: string) => {
+    setSelectedBrands(prev => 
+      prev.includes(brand) 
+        ? prev.filter(b => b !== brand) 
+        : [...prev, brand]
+    );
+  };
+  
+  // Reset all filters
+  const resetFilters = () => {
+    setSelectedCategory("");
     setPriceRange([0, maxPrice]);
+    setSelectedBrands([]);
+    
+    const params = new URLSearchParams(searchParams);
+    params.delete("category");
+    params.delete("minPrice");
+    params.delete("maxPrice");
+    params.delete("brand");
+    setSearchParams(params);
+
+    // Call onFilterChange if provided
+    if (onFilterChange) {
+      onFilterChange({
+        dressStyle: "",
+        priceRange: [0, maxPrice],
+        // Reset other filters as needed
+      });
+    }
   };
   
   return (
     <div className={`space-y-6 ${className}`}>
       <div>
-        <h3 className="text-lg font-medium mb-3 dark:text-white">Categories</h3>
-        <div className="space-y-2">
-          {categories.map((category) => (
-            <div key={category} className="flex items-center">
-              <Checkbox
-                id={`category-${category}`}
-                checked={selectedCategories.includes(category)}
-                onCheckedChange={(checked) =>
-                  handleCategoryChange(category, checked === true)
-                }
-                className="mr-2 h-4 w-4 text-primary"
+        <h3 className="text-lg font-semibold mb-3 dark:text-white">Price Range</h3>
+        <div className="px-2">
+          <Slider
+            defaultValue={priceRange}
+            value={priceRange}
+            max={maxPrice}
+            step={1}
+            onValueChange={handlePriceChange}
+            className="mb-6"
+          />
+          <div className="flex items-center space-x-4 mt-4">
+            <div>
+              <Label htmlFor="min-price" className="text-sm text-gray-500 dark:text-gray-400">Min</Label>
+              <Input
+                id="min-price"
+                type="number"
+                className="w-24 dark:bg-gray-800 dark:border-gray-700"
+                value={priceRange[0]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value >= 0) {
+                    setPriceRange([value, priceRange[1]]);
+                  }
+                }}
               />
-              <Label
-                htmlFor={`category-${category}`}
-                className="text-sm text-gray-700 dark:text-gray-300"
-              >
-                {category}
-              </Label>
             </div>
-          ))}
-        </div>
-      </div>
-      
-      <div>
-        <h3 className="text-lg font-medium mb-3 dark:text-white">Brands</h3>
-        <div className="space-y-2">
-          {brands.map((brand) => (
-            <div key={brand} className="flex items-center">
-              <Checkbox
-                id={`brand-${brand}`}
-                checked={selectedBrands.includes(brand)}
-                onCheckedChange={(checked) =>
-                  handleBrandChange(brand, checked === true)
-                }
-                className="mr-2 h-4 w-4 text-primary"
+            <div>
+              <Label htmlFor="max-price" className="text-sm text-gray-500 dark:text-gray-400">Max</Label>
+              <Input
+                id="max-price"
+                type="number"
+                className="w-24 dark:bg-gray-800 dark:border-gray-700"
+                value={priceRange[1]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value <= maxPrice) {
+                    setPriceRange([priceRange[0], value]);
+                  }
+                }}
               />
-              <Label
-                htmlFor={`brand-${brand}`}
-                className="text-sm text-gray-700 dark:text-gray-300"
-              >
-                {brand}
-              </Label>
             </div>
-          ))}
+          </div>
         </div>
       </div>
       
-      <div>
-        <h3 className="text-lg font-medium mb-3 dark:text-white">Price Range</h3>
-        <Slider
-          value={[priceRange[0], priceRange[1]]}
-          min={0}
-          max={maxPrice}
-          step={10}
-          onValueChange={handlePriceChange}
-          className="my-6"
-        />
-        <div className="flex items-center justify-between text-sm dark:text-gray-300">
-          <span>${priceRange[0]}</span>
-          <span>${priceRange[1]}</span>
+      {categories.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-3 dark:text-white">Categories</h3>
+          <div className="space-y-1.5">
+            {categories.map((category) => (
+              <div key={category} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`category-${category}`}
+                  checked={selectedCategory === category}
+                  onCheckedChange={() => handleCategoryChange(category)}
+                />
+                <Label
+                  htmlFor={`category-${category}`}
+                  className="text-sm dark:text-gray-300"
+                >
+                  {category}
+                </Label>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       
-      <Button 
-        variant="outline" 
-        size="sm" 
-        onClick={clearFilters}
-        className="w-full mt-4 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-      >
-        Clear All Filters
-      </Button>
+      {brands.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-3 dark:text-white">Brands</h3>
+          <div className="space-y-1.5">
+            {brands.map((brand) => (
+              <div key={brand} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`brand-${brand}`}
+                  checked={selectedBrands.includes(brand)}
+                  onCheckedChange={() => handleBrandChange(brand)}
+                />
+                <Label
+                  htmlFor={`brand-${brand}`}
+                  className="text-sm dark:text-gray-300"
+                >
+                  {brand}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      <div className="flex gap-2">
+        <Button
+          onClick={applyFilters}
+          className="flex-1"
+        >
+          Apply Filters
+        </Button>
+        <Button
+          variant="outline"
+          onClick={resetFilters}
+          className="flex-1 dark:border-gray-700 dark:text-gray-300"
+        >
+          Reset
+        </Button>
+      </div>
     </div>
   );
 };

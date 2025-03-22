@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Star, Plus, Minus, ChevronDown, CheckCircle2, SlidersHorizontal } from "lucide-react";
@@ -359,7 +358,46 @@ const ProductDetail = () => {
               </TabsContent>
               
               <TabsContent value="faqs" className="py-6">
-                <ProductFAQ faqs={faqs} />
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-bold dark:text-white">FAQs</h3>
+                    
+                    <div className="flex items-center space-x-3">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="border rounded-md flex items-center px-3 dark:border-gray-700 dark:text-gray-200"
+                      >
+                        <SlidersHorizontal size={16} className="mr-2" />
+                        Latest
+                        <ChevronDown size={16} className="ml-2" />
+                      </Button>
+                      
+                      <Button className="bg-black dark:bg-white dark:text-black text-white rounded-full px-4 py-2 text-sm">
+                        Write a Question
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {product.faqs && product.faqs.length > 0 && (
+                    <div className="mt-16">
+                      <style>
+                        {`
+                          .faq-answer {
+                            max-height: 0;
+                            overflow: hidden;
+                            transition: max-height 0.3s ease-out;
+                          }
+                          .faq-active .faq-answer {
+                            max-height: 500px;
+                            transition: max-height 0.5s ease-in;
+                          }
+                        `}
+                      </style>
+                      <ProductFAQ faqs={product.faqs} />
+                    </div>
+                  )}
+                </div>
               </TabsContent>
             </Tabs>
           </div>

@@ -30,12 +30,17 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       afterSignOutUrl="/"
       appearance={{
         variables: {
-          colorPrimary: 'var(--primary)',
-          colorBackground: 'var(--background)',
-          colorText: 'var(--foreground)',
-          colorInputText: 'var(--foreground)',
-          colorInputBackground: 'var(--background)',
-          colorTextSecondary: 'var(--muted-foreground)',
+          colorPrimary: '#000000',
+          colorBackground: '#ffffff',
+          colorText: '#000000',
+          colorInputText: '#000000',
+          colorInputBackground: '#ffffff',
+          colorTextSecondary: '#6b7280',
+        },
+        elements: {
+          card: "shadow-md rounded-md",
+          formButtonPrimary: "bg-black hover:bg-gray-800",
+          formFieldInput: "border-gray-300 focus:border-black focus:ring-black",
         },
       }}
     >
