@@ -13,6 +13,7 @@ export interface Product {
   images: string[];
   description: string;
   dressStyle: string[];
+  faqs?: { question: string; answer: string; }[];
 }
 
 export const products: Product[] = [

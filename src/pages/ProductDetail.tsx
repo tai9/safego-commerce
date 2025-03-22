@@ -97,8 +97,7 @@ const ProductDetail = () => {
     'brown': '#92400e',
   };
 
-  // Sample FAQs data
-  const faqs = [
+  const defaultFaqs = [
     {
       question: "What sizes are available?",
       answer: "We offer sizes ranging from XS to 3XL. Please refer to our size guide to find your perfect fit."
@@ -121,7 +120,6 @@ const ProductDetail = () => {
     }
   ];
 
-  // Convert product ratings for the review component
   const ratings = [
     { stars: 5, count: Math.round(reviewsData.filter(r => r.rating === 5).length) },
     { stars: 4, count: Math.round(reviewsData.filter(r => r.rating === 4).length) },
@@ -130,7 +128,6 @@ const ProductDetail = () => {
     { stars: 1, count: Math.round(reviewsData.filter(r => r.rating === 1).length) }
   ];
   
-  // Prepare reviews data for the review component
   const reviews = reviewsData.map(review => ({
     id: review.id,
     customerName: review.name,
@@ -379,24 +376,22 @@ const ProductDetail = () => {
                     </div>
                   </div>
                   
-                  {product.faqs && product.faqs.length > 0 && (
-                    <div className="mt-16">
-                      <style>
-                        {`
-                          .faq-answer {
-                            max-height: 0;
-                            overflow: hidden;
-                            transition: max-height 0.3s ease-out;
-                          }
-                          .faq-active .faq-answer {
-                            max-height: 500px;
-                            transition: max-height 0.5s ease-in;
-                          }
-                        `}
-                      </style>
-                      <ProductFAQ faqs={product.faqs} />
-                    </div>
-                  )}
+                  <div className="mt-16">
+                    <style>
+                      {`
+                        .faq-answer {
+                          max-height: 0;
+                          overflow: hidden;
+                          transition: max-height 0.3s ease-out;
+                        }
+                        .faq-active .faq-answer {
+                          max-height: 500px;
+                          transition: max-height 0.5s ease-in;
+                        }
+                      `}
+                    </style>
+                    <ProductFAQ faqs={product.faqs || defaultFaqs} />
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
