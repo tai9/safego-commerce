@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Star, Plus, Minus, ChevronDown, ChevronUp, CheckCircle2, SlidersHorizontal } from "lucide-react";
@@ -21,23 +20,19 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [product, setProduct] = useState(products[0]); // Default to first product
   
-  // Find the product by ID
   useEffect(() => {
     const foundProduct = products.find(p => p.id === id);
     if (foundProduct) {
       setProduct(foundProduct);
-      // Set default selections
       setSelectedColor(foundProduct.colors[0]);
       setSelectedSize(foundProduct.sizes[0]);
     }
   }, [id]);
   
-  // Reset scroll position
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
   
-  // Related products (random 4 products that are not the current one)
   const relatedProducts = products
     .filter(p => p.id !== id)
     .sort(() => 0.5 - Math.random())
@@ -70,7 +65,6 @@ const ProductDetail = () => {
       return;
     }
     
-    // Add to cart logic would go here
     toast({
       title: "Added to cart",
       description: `${quantity} × ${product.name} added to your cart`,
@@ -87,7 +81,6 @@ const ProductDetail = () => {
     });
   };
   
-  // Color mapping for the UI
   const colorMap: Record<string, string> = {
     'white': '#ffffff',
     'black': '#000000',
@@ -112,7 +105,6 @@ const ProductDetail = () => {
       <Navbar />
       
       <main className="flex-grow">
-        {/* Breadcrumb */}
         <div className="container mx-auto px-4 py-4">
           <div className="flex text-sm items-center">
             <Link to="/" className="text-gray-500 hover:text-black">Home</Link>
@@ -127,16 +119,13 @@ const ProductDetail = () => {
         
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {/* Product Images */}
             <div>
               <ProductGallery images={[...product.images, ...product.images]} name={product.name} />
             </div>
             
-            {/* Product Details */}
             <div>
               <h1 className="text-2xl md:text-4xl font-bold mb-2">{product.name.toUpperCase()}</h1>
               
-              {/* Rating */}
               <div className="flex items-center mb-4">
                 <div className="flex mr-2">
                   {[...Array(5)].map((_, i) => (
@@ -152,7 +141,6 @@ const ProductDetail = () => {
                 </span>
               </div>
               
-              {/* Price */}
               <div className="flex items-center mb-6">
                 <span className="text-2xl font-bold mr-3">${product.price}</span>
                 {product.originalPrice && (
@@ -163,12 +151,10 @@ const ProductDetail = () => {
                 )}
               </div>
               
-              {/* Description */}
               <p className="text-gray-600 mb-8">
                 {product.description}
               </p>
               
-              {/* Color Selection */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium mb-3">Select Colors</h3>
                 <div className="flex space-x-3">
@@ -184,7 +170,6 @@ const ProductDetail = () => {
                 </div>
               </div>
               
-              {/* Size Selection */}
               <div className="mb-8">
                 <h3 className="text-sm font-medium mb-3">Choose Size</h3>
                 <div className="flex flex-wrap gap-2">
@@ -200,7 +185,6 @@ const ProductDetail = () => {
                 </div>
               </div>
               
-              {/* Quantity and Add to Cart */}
               <div className="flex items-center mb-8">
                 <div className="quantity-input mr-4">
                   <button 
@@ -228,7 +212,6 @@ const ProductDetail = () => {
                 </Button>
               </div>
               
-              {/* Additional Info (Delivery, etc.) */}
               <div className="space-y-4 border-t border-gray-200 pt-6">
                 <div className="flex items-center text-sm">
                   <CheckCircle2 size={16} className="mr-2 text-green-500" />
@@ -246,26 +229,25 @@ const ProductDetail = () => {
             </div>
           </div>
           
-          {/* Product Details, Reviews, FAQs Tabs */}
           <div className="mb-16">
             <Tabs defaultValue="reviews">
-              <div className="border-b border-gray-200">
+              <div className="border-b border-gray-200 dark:border-gray-700">
                 <TabsList className="flex w-full bg-transparent justify-center md:justify-start">
                   <TabsTrigger 
                     value="details"
-                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
+                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black dark:data-[state=active]:border-white data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
                   >
                     Product Details
                   </TabsTrigger>
                   <TabsTrigger 
                     value="reviews"
-                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
+                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black dark:data-[state=active]:border-white data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
                   >
                     Rating & Reviews
                   </TabsTrigger>
                   <TabsTrigger 
                     value="faqs"
-                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
+                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black dark:data-[state=active]:border-white data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
                   >
                     FAQs
                   </TabsTrigger>
@@ -299,7 +281,7 @@ const ProductDetail = () => {
               <TabsContent value="reviews" className="py-6">
                 <div className="max-w-4xl mx-auto">
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold">All Reviews <span className="text-gray-500 font-normal">({reviewsData.length})</span></h3>
+                    <h3 className="text-xl font-bold dark:text-white">All Reviews <span className="text-gray-500 dark:text-gray-400 font-normal">({reviewsData.length})</span></h3>
                     
                     <div className="flex items-center space-x-3">
                       <Button 
@@ -312,7 +294,7 @@ const ProductDetail = () => {
                         <ChevronDown size={16} className="ml-2" />
                       </Button>
                       
-                      <Button className="bg-black text-white rounded-full px-4 py-2 text-sm">
+                      <Button className="bg-black dark:bg-white dark:text-black text-white rounded-full px-4 py-2 text-sm">
                         Write a Review
                       </Button>
                     </div>
@@ -402,7 +384,6 @@ const ProductDetail = () => {
             </Tabs>
           </div>
           
-          {/* You Might Also Like */}
           <div className="mb-16">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">YOU MIGHT ALSO LIKE</h2>
             

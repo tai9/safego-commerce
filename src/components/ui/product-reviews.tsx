@@ -17,6 +17,7 @@ export interface Review {
   comment: string;
   helpful: number;
   customerImage?: string;
+  verified?: boolean;
 }
 
 interface ProductReviewsProps {
@@ -48,7 +49,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
       {/* Rating Summary */}
       <div className="flex flex-col md:flex-row gap-10">
         <div className="md:w-1/3 flex flex-col items-center justify-center space-y-4">
-          <div className="text-5xl font-bold">{overallRating.toFixed(1)}</div>
+          <div className="text-5xl font-bold dark:text-white">{overallRating.toFixed(1)}</div>
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
