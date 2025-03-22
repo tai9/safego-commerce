@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -9,7 +8,7 @@ import ProductCard from "@/components/ui/ProductCard";
 import FilterSidebar from "@/components/ui/FilterSidebar";
 import MobileFilter from "@/components/ui/MobileFilter";
 import { products } from "@/data/products";
-import { ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownNarrowWide } from "lucide-react";
+import { ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownNarrowWide, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
@@ -30,7 +29,6 @@ const Products = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   
-  // Parse category from URL
   const categoryParam = new URLSearchParams(location.search).get('category') || '';
   
   useEffect(() => {
@@ -39,24 +37,19 @@ const Products = () => {
     }
   }, [categoryParam]);
   
-  // Get filtered products
   const filteredProducts = products.filter(product => {
-    // Filter by dress style if selected
     if (activeFilters.dressStyle && !product.dressStyle.includes(activeFilters.dressStyle)) {
       return false;
     }
     
-    // Filter by color if selected
     if (activeFilters.colors && !product.colors.includes(activeFilters.colors)) {
       return false;
     }
     
-    // Filter by size if selected
     if (activeFilters.size && !product.sizes.includes(activeFilters.size)) {
       return false;
     }
     
-    // Filter by price range
     if (product.price < activeFilters.priceRange[0] || product.price > activeFilters.priceRange[1]) {
       return false;
     }
@@ -64,7 +57,6 @@ const Products = () => {
     return true;
   });
   
-  // Apply sorting
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortOption) {
       case "Price: Low to High":
@@ -80,20 +72,18 @@ const Products = () => {
     }
   });
   
-  // Get current products for pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
   
-  // Reset scroll position when entering the page
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
   const handleFilterChange = (newFilters) => {
     setActiveFilters(prev => ({...prev, ...newFilters}));
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
   
   const sortOptions = ["Most Popular", "Newest", "Price: Low to High", "Price: High to Low", "Customer Rating"];
@@ -129,7 +119,6 @@ const Products = () => {
       <Navbar />
       
       <main className="flex-grow">
-        {/* Breadcrumb */}
         <div className="container mx-auto px-4 py-4">
           <div className="flex text-sm items-center">
             <Link to="/" className="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white">Home</Link>
@@ -142,9 +131,7 @@ const Products = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl md:text-3xl font-bold">{activeFilters.dressStyle || "All Products"}</h1>
             
-            {/* Sort and Filter Controls */}
             <div className="flex items-center space-x-2">
-              {/* Mobile Filter Button */}
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -155,7 +142,6 @@ const Products = () => {
                 Filter
               </Button>
               
-              {/* Sort Dropdown */}
               <div className="relative">
                 <Button 
                   variant="outline" 
@@ -191,7 +177,6 @@ const Products = () => {
                 )}
               </div>
               
-              {/* Filter toggle button (Desktop) */}
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -203,7 +188,6 @@ const Products = () => {
           </div>
           
           <div className="flex flex-col md:flex-row gap-8">
-            {/* Sidebar - Desktop Only */}
             <div className="hidden md:block w-64 flex-shrink-0">
               <FilterSidebar 
                 activeFilters={activeFilters}
@@ -211,7 +195,6 @@ const Products = () => {
               />
             </div>
             
-            {/* Product Grid */}
             <div className="flex-1">
               <div className="flex justify-between items-center mb-6">
                 <div className="text-sm text-muted-foreground">
@@ -236,7 +219,6 @@ const Products = () => {
                 ))}
               </div>
               
-              {/* Pagination */}
               {sortedProducts.length > 0 && (
                 <div className="flex justify-center mt-10">
                   <Pagination>
@@ -303,7 +285,6 @@ const Products = () => {
         </div>
       </main>
       
-      {/* Mobile Filter Dialog */}
       <MobileFilter 
         isOpen={mobileFilterOpen} 
         onClose={() => setMobileFilterOpen(false)}

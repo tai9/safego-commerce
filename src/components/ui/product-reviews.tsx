@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Star } from "lucide-react";
+import { Star, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import ReviewCard from "@/components/ui/ReviewCard";
 
@@ -9,7 +9,7 @@ interface Rating {
   count: number;
 }
 
-interface Review {
+export interface Review {
   id: string;
   customerName: string;
   rating: number;
@@ -104,7 +104,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
       <div className="space-y-6">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => (
-            <ReviewCard key={review.id} review={review as any} />
+            <ReviewCard key={review.id} reviewData={review} />
           ))
         ) : (
           <div className="text-center py-10 text-muted-foreground">

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface QuantityInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface QuantityInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   value: number;
   onValueChange: (value: number) => void;
   min?: number;
