@@ -46,7 +46,7 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
       <div
         ref={ref}
         className={cn(
-          "flex items-center border border-input rounded-md overflow-hidden",
+          "flex items-center rounded-full border border-input overflow-hidden bg-background",
           sizeClasses[size],
           className
         )}
@@ -56,7 +56,7 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
           variant="ghost"
           size="icon"
           className={cn(
-            "rounded-none border-r border-input h-full",
+            "rounded-l-full h-full hover:bg-muted",
             sizeClasses[size]
           )}
           onClick={handleDecrease}
@@ -66,12 +66,14 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
         </Button>
         
         <Input
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={value}
           onChange={handleInputChange}
           className={cn(
-            "h-full border-0 rounded-none text-center focus-visible:ring-0 focus-visible:ring-offset-0",
-            size === "sm" ? "w-10" : size === "md" ? "w-12" : "w-16"
+            "h-full border-0 rounded-none text-center focus-visible:ring-0 focus-visible:ring-offset-0 p-0",
+            size === "sm" ? "w-8" : size === "md" ? "w-10" : "w-14"
           )}
           min={min}
           max={max}
@@ -83,7 +85,7 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
           variant="ghost"
           size="icon"
           className={cn(
-            "rounded-none border-l border-input h-full",
+            "rounded-r-full h-full hover:bg-muted",
             sizeClasses[size]
           )}
           onClick={handleIncrease}

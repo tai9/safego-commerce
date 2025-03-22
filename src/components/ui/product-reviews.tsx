@@ -55,7 +55,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
                 key={i}
                 size={20}
                 className={i < Math.floor(overallRating) ? "text-yellow-400 fill-yellow-400" : 
-                  i < overallRating ? "text-yellow-400 fill-yellow-400 opacity-50" : "text-gray-300"}
+                  i < overallRating ? "text-yellow-400 fill-yellow-400 opacity-50" : "text-gray-300 dark:text-gray-600"}
               />
             ))}
           </div>
@@ -104,7 +104,7 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
       <div className="space-y-6">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => (
-            <ReviewCard key={review.id} reviewData={review} />
+            <ReviewCard key={review.id} review={review} />
           ))
         ) : (
           <div className="text-center py-10 text-muted-foreground">

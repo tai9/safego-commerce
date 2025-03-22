@@ -92,4 +92,40 @@
   .glass-morphism {
     @apply backdrop-blur-lg bg-background/80 border border-border shadow-lg;
   }
+  
+  /* Footer Dark Mode Improvements */
+  .dark .footer-link {
+    @apply text-gray-300 hover:text-white transition-colors;
+  }
+  
+  .dark .hero-section {
+    @apply bg-gradient-to-r from-gray-900 to-gray-800;
+  }
+  
+  .dark .newsletter-section {
+    @apply bg-gray-800 text-white border-gray-700;
+  }
+  
+  /* Cart page dark mode improvements */
+  .dark .cart-item {
+    @apply border-gray-700;
+  }
+  
+  .dark .cart-summary {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  /* Improved FAQs styles */
+  .faq-accordion [data-state=open] {
+    @apply bg-secondary/30;
+  }
+  
+  .dark .faq-accordion [data-state=open] {
+    @apply bg-secondary/50;
+  }
+  
+  /* Scroll to top button */
+  .scroll-to-top {
+    @apply fixed bottom-6 right-6 rounded-full w-12 h-12 bg-primary text-primary-foreground flex items-center justify-center shadow-lg transition-all z-30 opacity-90 hover:opacity-100;
+  }
 }
