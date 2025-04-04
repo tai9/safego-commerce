@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ChevronDown, Filter, Grid2X2, Grid3X3 } from "lucide-react";
@@ -19,14 +18,13 @@ const Products = () => {
   const [gridCols, setGridCols] = useState(4);
   const [sortBy, setSortBy] = useState("featured");
   const [activeFilters, setActiveFilters] = useState({
-    dressStyle: "",
+    dressStyle: "all",
     colors: "",
     size: "",
     priceRange: [0, 500],
   });
   
   useEffect(() => {
-    // Set initial grid cols based on screen size
     const handleResize = () => {
       if (window.innerWidth < 640) {
         setGridCols(2);
@@ -35,14 +33,13 @@ const Products = () => {
       }
     };
     
-    handleResize(); // Call initially
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Update active filters when URL changes
   useEffect(() => {
-    const categoryParam = searchParams.get("category") || "";
+    const categoryParam = searchParams.get("category") || "all";
     const minPriceParam = searchParams.get("minPrice");
     const maxPriceParam = searchParams.get("maxPrice");
     
@@ -62,15 +59,12 @@ const Products = () => {
   const maxPriceParam = searchParams.get("maxPrice");
   const searchQuery = searchParams.get("q");
   
-  // Filter products based on URL params
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      // Filter by category
-      if (categoryParam && !product.category.toLowerCase().includes(categoryParam.toLowerCase())) {
+      if (categoryParam && categoryParam !== "all" && !product.category.toLowerCase().includes(categoryParam.toLowerCase())) {
         return false;
       }
       
-      // Filter by price
       if (minPriceParam && product.price < parseInt(minPriceParam)) {
         return false;
       }
@@ -79,7 +73,6 @@ const Products = () => {
         return false;
       }
       
-      // Filter by search query
       if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
@@ -88,7 +81,6 @@ const Products = () => {
     });
   }, [categoryParam, brandParam, minPriceParam, maxPriceParam, searchQuery]);
   
-  // Sort products
   const sortedProducts = useMemo(() => {
     switch (sortBy) {
       case "price-low":
@@ -104,12 +96,10 @@ const Products = () => {
     }
   }, [filteredProducts, sortBy]);
   
-  // Extract unique categories and brands
   const categories = [...new Set(products.map((p) => p.category))];
   const brands = [...new Set(["Nike", "Adidas", "Puma", "Under Armour", "New Balance"])];
   const maxPrice = Math.max(...products.map((p) => p.price));
 
-  // Handle filter changes
   const handleFilterChange = (newFilters: any) => {
     setActiveFilters({
       ...activeFilters,
@@ -126,7 +116,7 @@ const Products = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col mb-8">
             <h1 className="text-3xl font-bold mb-2 dark:text-white">
-              {categoryParam || "All Products"}
+              {categoryParam && categoryParam !== "all" ? categoryParam : "All Products"}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
               {sortedProducts.length} products found
@@ -134,7 +124,6 @@ const Products = () => {
           </div>
           
           <div className="flex flex-col md:flex-row gap-8">
-            {/* Desktop Filter */}
             <aside className="hidden md:block w-64 shrink-0">
               <FilterSidebar 
                 categories={categories} 
@@ -145,7 +134,6 @@ const Products = () => {
               />
             </aside>
             
-            {/* Product Grid */}
             <div className="flex-1">
               <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
                 <div className="flex items-center gap-2">
@@ -214,7 +202,6 @@ const Products = () => {
           </div>
         </div>
         
-        {/* Mobile Filter Dialog */}
         <MobileFilter
           open={showMobileFilter}
           onClose={() => setShowMobileFilter(false)}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { 
@@ -76,12 +75,10 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 
-// Form validation with React Hook Form
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-// Define the form schema
 const productFormSchema = z.object({
   name: z.string().min(1, { message: "Product name is required" }),
   description: z.string().min(1, { message: "Description is required" }),
@@ -112,7 +109,6 @@ const ProductsManagement = () => {
   const { toast } = useToast();
   const itemsPerPage = 10;
 
-  // Form for adding/editing products
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
@@ -126,10 +122,8 @@ const ProductsManagement = () => {
     }
   });
 
-  // Get the unique categories from products for the filter dropdown
   const categories = [...new Set(products.map(product => product.category))];
 
-  // Handle sort
   const handleSort = (key: keyof Product) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -138,23 +132,21 @@ const ProductsManagement = () => {
     setSortConfig({ key, direction });
   };
 
-  // Apply filters and sorting
   const filteredProducts = products.filter((product) => {
     const matchesSearch = 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.id.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCategory = categoryFilter ? product.category === categoryFilter : true;
+    const matchesCategory = categoryFilter === "all" ? true : product.category === categoryFilter;
     
-    const matchesStatus = statusFilter 
-      ? (statusFilter === "on-sale" ? product.discount && product.discount > 0 : !product.discount || product.discount === 0)
-      : true;
+    const matchesStatus = statusFilter === "all" 
+      ? true 
+      : (statusFilter === "on-sale" ? product.discount && product.discount > 0 : !product.discount || product.discount === 0);
 
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
-  // Apply sorting
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (!sortConfig.key) return 0;
     
@@ -166,14 +158,12 @@ const ProductsManagement = () => {
         ? aValue.localeCompare(bValue) 
         : bValue.localeCompare(aValue);
     } else {
-      // Handle numeric sorting
       const numA = Number(aValue);
       const numB = Number(bValue);
       return sortConfig.direction === "asc" ? numA - numB : numB - numA;
     }
   });
 
-  // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -183,7 +173,6 @@ const ProductsManagement = () => {
     setCurrentPage(pageNumber);
   };
 
-  // CRUD operations
   const handleDeleteClick = (product: Product) => {
     setSelectedProduct(product);
     setIsDeleteDialogOpen(true);
@@ -192,7 +181,6 @@ const ProductsManagement = () => {
   const handleDeleteConfirm = () => {
     if (!selectedProduct) return;
     
-    // Filter out the deleted product
     const updatedProducts = products.filter(p => p.id !== selectedProduct.id);
     setProducts(updatedProducts);
     
@@ -235,7 +223,6 @@ const ProductsManagement = () => {
 
   const onSubmit = (data: ProductFormValues) => {
     if (selectedProduct) {
-      // Edit existing product
       const updatedProducts = products.map(p => 
         p.id === selectedProduct.id 
         ? { ...p, ...data } 
@@ -250,7 +237,6 @@ const ProductsManagement = () => {
       
       setIsEditDialogOpen(false);
     } else {
-      // Add new product
       const newProduct: Product = {
         id: `product_${Date.now()}`,
         name: data.name,
@@ -286,8 +272,8 @@ const ProductsManagement = () => {
 
   const resetFilters = () => {
     setSearchQuery("");
-    setCategoryFilter("");
-    setStatusFilter("");
+    setCategoryFilter("all");
+    setStatusFilter("all");
     setSortConfig({ key: "", direction: "asc" });
   };
 
@@ -341,7 +327,7 @@ const ProductsManagement = () => {
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
@@ -361,7 +347,7 @@ const ProductsManagement = () => {
                     <SelectValue placeholder="All Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
+                    <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="regular">Regular</SelectItem>
                     <SelectItem value="on-sale">On Sale</SelectItem>
                   </SelectContent>
@@ -574,7 +560,6 @@ const ProductsManagement = () => {
           </CardFooter>
         </Card>
 
-        {/* Delete Confirmation Dialog */}
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -597,7 +582,6 @@ const ProductsManagement = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Add/Edit Product Dialog */}
         <Dialog open={isEditDialogOpen || isAddDialogOpen} onOpenChange={(open) => {
           if (!open) {
             setIsEditDialogOpen(false);

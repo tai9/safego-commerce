@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Slider } from "@/components/ui/slider";
@@ -31,14 +30,14 @@ const FilterSidebar = ({
 }: FilterSidebarProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // State for active filters
+  // State for active filters - use "all" instead of empty string
   const [priceRange, setPriceRange] = useState<number[]>([0, maxPrice]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   
   // Initialize filters from URL or props
   useEffect(() => {
-    const categoryParam = searchParams.get("category") || "";
+    const categoryParam = searchParams.get("category") || "all";
     const minPriceParam = searchParams.get("minPrice");
     const maxPriceParam = searchParams.get("maxPrice");
     const brandParam = searchParams.get("brand");
@@ -74,8 +73,8 @@ const FilterSidebar = ({
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams);
     
-    // Category filter
-    if (selectedCategory) {
+    // Category filter - don't add "all" to URL
+    if (selectedCategory && selectedCategory !== "all") {
       params.set("category", selectedCategory);
     } else {
       params.delete("category");
@@ -120,7 +119,7 @@ const FilterSidebar = ({
   
   // Handle category selection
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category === selectedCategory ? "" : category);
+    setSelectedCategory(category === selectedCategory ? "all" : category);
   };
   
   // Handle brand selection
@@ -134,7 +133,7 @@ const FilterSidebar = ({
   
   // Reset all filters
   const resetFilters = () => {
-    setSelectedCategory("");
+    setSelectedCategory("all");
     setPriceRange([0, maxPrice]);
     setSelectedBrands([]);
     
@@ -148,7 +147,7 @@ const FilterSidebar = ({
     // Call onFilterChange if provided
     if (onFilterChange) {
       onFilterChange({
-        dressStyle: "",
+        dressStyle: "all",
         priceRange: [0, maxPrice],
         // Reset other filters as needed
       });
