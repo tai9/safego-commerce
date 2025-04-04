@@ -16,6 +16,14 @@ import Search from "./pages/Search";
 import OnSale from "./pages/OnSale";
 import NewArrivals from "./pages/NewArrivals";
 import Brands from "./pages/Brands";
+import Dashboard from "./pages/Dashboard";
+import DashboardOverview from "./pages/dashboard/DashboardOverview";
+import ProductsManagement from "./pages/dashboard/ProductsManagement";
+import OrdersManagement from "./pages/dashboard/OrdersManagement";
+import CustomersManagement from "./pages/dashboard/CustomersManagement";
+import UsersManagement from "./pages/dashboard/UsersManagement";
+import SettingsManagement from "./pages/dashboard/SettingsManagement";
+import ReportsManagement from "./pages/dashboard/ReportsManagement";
 
 const App = () => (
   <HelmetProvider>
@@ -35,6 +43,18 @@ const App = () => (
           <Route path="/sale" element={<OnSale />} />
           <Route path="/new-arrivals" element={<NewArrivals />} />
           <Route path="/brands" element={<Brands />} />
+          
+          {/* Dashboard Routes */}
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route index element={<DashboardOverview />} />
+            <Route path="products" element={<ProductsManagement />} />
+            <Route path="orders" element={<OrdersManagement />} />
+            <Route path="customers" element={<CustomersManagement />} />
+            <Route path="users" element={<UsersManagement />} />
+            <Route path="settings" element={<SettingsManagement />} />
+            <Route path="reports" element={<ReportsManagement />} />
+          </Route>
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
