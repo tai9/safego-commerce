@@ -32,7 +32,7 @@ export const products: Product[] = [
     reviews: 123,
     colors: ["white", "black", "blue"],
     sizes: ["S", "M", "L", "XL"],
-    images: ["/images/cd011f2c-675c-4750-8cc2-421974b43274.png"],
+    images: ["/images/Gradient Graphic T-shirt.png"],
     description:
       "This graphic t-shirt features a vibrant gradient design. Made from premium cotton for all-day comfort.",
     dressStyle: ["Casual"],
@@ -63,7 +63,7 @@ export const products: Product[] = [
     reviews: 98,
     colors: ["red", "blue", "green"],
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: ["/images/6d530bed-3330-4e6e-bc5f-4ae73f4b2063.png"],
+    images: ["/images/Polo with Tipping Details.png"],
     description:
       "A classic polo shirt with contrasting tipping details on the collar and sleeves for a sophisticated look.",
     dressStyle: ["Casual", "Formal"],
@@ -94,7 +94,7 @@ export const products: Product[] = [
     reviews: 86,
     colors: ["black", "white", "gray"],
     sizes: ["XS", "S", "M", "L", "XL"],
-    images: ["/images/1a91bd17-7194-498a-acf3-4dc18daa248e.png"],
+    images: ["/images/Black Striped T-shirt.png"],
     description:
       "A stylish striped t-shirt with a classic design. Perfect for casual everyday wear.",
     dressStyle: ["Casual"],
@@ -125,7 +125,7 @@ export const products: Product[] = [
     reviews: 65,
     colors: ["blue", "black", "gray"],
     sizes: ["28", "30", "32", "34", "36"],
-    images: ["/images/64341d02-b9c7-4e17-a103-2435e22dd3ef.png"],
+    images: ["/images/Skinny Fit Jeans.png"],
     description:
       "Modern skinny fit jeans with a comfortable stretch. Sleek design for a contemporary look.",
     dressStyle: ["Casual", "Party"],
@@ -154,7 +154,7 @@ export const products: Product[] = [
     reviews: 112,
     colors: ["red", "blue", "green"],
     sizes: ["S", "M", "L", "XL"],
-    images: ["/images/50e38023-1ab4-4395-a99a-ef9d85a27d9d.png"],
+    images: ["/images/Checkered Shirt.png"],
     description:
       "A versatile checkered shirt that can be dressed up or down. Made from soft cotton fabric.",
     dressStyle: ["Casual", "Formal"],
@@ -185,7 +185,7 @@ export const products: Product[] = [
     reviews: 78,
     colors: ["orange", "blue", "black"],
     sizes: ["S", "M", "L", "XL"],
-    images: ["/images/4cbbba7d-483f-4592-8429-560b25ec214f.png"],
+    images: ["/images/Sleeve Striped T-shirt.png"],
     description:
       "A stylish t-shirt with contrasting striped sleeves for a sporty, casual look.",
     dressStyle: ["Casual", "Gym"],
@@ -216,7 +216,7 @@ export const products: Product[] = [
     reviews: 43,
     colors: ["green", "blue", "black"],
     sizes: ["S", "M", "L", "XL", "XXL"],
-    images: ["/images/89e9b281-82ec-42ce-b4ae-47c6c08e9020.png"],
+    images: ["/images/Vertical Striped Shirt.png"],
     description:
       "An elegant vertical striped shirt. Perfect for both casual and formal occasions.",
     dressStyle: ["Casual", "Formal"],
@@ -245,7 +245,7 @@ export const products: Product[] = [
     reviews: 56,
     colors: ["orange", "white", "black"],
     sizes: ["S", "M", "L", "XL"],
-    images: ["/images/afe12d1f-a5cc-44be-92ef-ccc0151fbf02.png"],
+    images: ["/images/Courage Graphic T-shirt.png"],
     description:
       "Express yourself with this bold graphic t-shirt featuring an inspiring 'Courage' design.",
     dressStyle: ["Casual", "Party"],
@@ -274,7 +274,7 @@ export const products: Product[] = [
     reviews: 32,
     colors: ["blue", "khaki", "black"],
     sizes: ["28", "30", "32", "34", "36"],
-    images: ["/images/1aeccf89-6964-414c-842b-74ca991739fc.png"],
+    images: ["/images/Loose Fit Bermuda Shorts.png"],
     description:
       "Comfortable loose fit bermuda shorts, perfect for casual summer days.",
     dressStyle: ["Casual", "Gym"],
@@ -305,7 +305,7 @@ export const products: Product[] = [
     reviews: 65,
     colors: ["brown", "green", "blue"],
     sizes: ["S", "M", "L", "XL"],
-    images: ["/images/50e38023-1ab4-4395-a99a-ef9d85a27d9d-2.png"],
+    images: ["/images/One Life Graphic T-shirt.png"],
     description:
       "This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.",
     dressStyle: ["Casual", "Party"],
