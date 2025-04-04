@@ -1,9 +1,25 @@
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Twitter, Facebook, Instagram, Github } from "lucide-react";
+import { Instagram, Facebook, Twitter, Youtube, Github } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    toast({
+      title: "Subscription successful!",
+      description: "You've been added to our newsletter.",
+    });
+
+    setEmail("");
+  };
+
   return (
     <footer className="bg-white pt-16 pb-8 border-t border-gray-100">
       {/* Newsletter */}

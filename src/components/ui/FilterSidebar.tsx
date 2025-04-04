@@ -1,252 +1,268 @@
-
 import { useState, useEffect } from "react";
-import { ChevronUp, ChevronDown, SlidersHorizontal } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useSearchParams } from "react-router-dom";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-interface FilterSidebarProps {
+export interface FilterSidebarProps {
+  categories?: string[];
+  brands?: string[];
+  maxPrice?: number;
   className?: string;
-  activeFilters: {
-    dressStyle: string;
-    colors: string | null;
-    size: string | null;
-    priceRange: number[];
+  activeFilters?: {
+    dressStyle?: string;
+    colors?: string | null;
+    size?: string | null;
+    priceRange?: number[];
   };
-  onFilterChange: (filters: any) => void;
+  onFilterChange?: (filters: any) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ 
-  className, 
-  activeFilters, 
-  onFilterChange 
-}) => {
-  const [priceRange, setPriceRange] = useState(activeFilters.priceRange);
-  const [filters, setFilters] = useState({
-    categories: { open: true },
-    price: { open: true },
-    colors: { open: true },
-    size: { open: true },
-    dressStyle: { open: true }
-  });
+const FilterSidebar = ({ 
+  categories = [], 
+  brands = [], 
+  maxPrice = 500,
+  className = "",
+  activeFilters,
+  onFilterChange
+}: FilterSidebarProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   
-  // Update local state when props change
+  // State for active filters - use "all" instead of empty string
+  const [priceRange, setPriceRange] = useState<number[]>([0, maxPrice]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  
+  // Initialize filters from URL or props
   useEffect(() => {
-    setPriceRange(activeFilters.priceRange);
-  }, [activeFilters.priceRange]);
+    const categoryParam = searchParams.get("category") || "all";
+    const minPriceParam = searchParams.get("minPrice");
+    const maxPriceParam = searchParams.get("maxPrice");
+    const brandParam = searchParams.get("brand");
+    
+    setSelectedCategory(categoryParam);
+    
+    if (minPriceParam && maxPriceParam) {
+      setPriceRange([parseInt(minPriceParam), parseInt(maxPriceParam)]);
+    } else {
+      setPriceRange([0, maxPrice]);
+    }
+    
+    if (brandParam) {
+      setSelectedBrands(brandParam.split(","));
+    } else {
+      setSelectedBrands([]);
+    }
+  }, [searchParams, maxPrice]);
+
+  // Initialize from activeFilters prop when available
+  useEffect(() => {
+    if (activeFilters) {
+      if (activeFilters.dressStyle) {
+        setSelectedCategory(activeFilters.dressStyle);
+      }
+      if (activeFilters.priceRange) {
+        setPriceRange(activeFilters.priceRange);
+      }
+    }
+  }, [activeFilters]);
   
-  const colors = [
-    { name: "green", value: "#22c55e" },
-    { name: "red", value: "#ef4444" },
-    { name: "yellow", value: "#eab308" },
-    { name: "orange", value: "#f97316" },
-    { name: "sky", value: "#0ea5e9" },
-    { name: "blue", value: "#3b82f6" },
-    { name: "purple", value: "#a855f7" },
-    { name: "pink", value: "#ec4899" },
-    { name: "white", value: "#ffffff" },
-    { name: "black", value: "#000000" }
-  ];
-  
-  const sizes = ["XX-Small", "X-Small", "Small", "Medium", "Large", "X-Large", "XX-Large", "3X-Large", "4X-Large"];
-  const dressStyles = ["Casual", "Formal", "Party", "Gym"];
-  
-  const toggleSection = (section: keyof typeof filters) => {
-    setFilters(prev => ({
-      ...prev,
-      [section]: { ...prev[section], open: !prev[section].open }
-    }));
+  // Apply filters to URL
+  const applyFilters = () => {
+    const params = new URLSearchParams(searchParams);
+    
+    // Category filter - don't add "all" to URL
+    if (selectedCategory && selectedCategory !== "all") {
+      params.set("category", selectedCategory);
+    } else {
+      params.delete("category");
+    }
+    
+    // Price range filter
+    if (priceRange[0] > 0) {
+      params.set("minPrice", priceRange[0].toString());
+    } else {
+      params.delete("minPrice");
+    }
+    
+    if (priceRange[1] < maxPrice) {
+      params.set("maxPrice", priceRange[1].toString());
+    } else {
+      params.delete("maxPrice");
+    }
+    
+    // Brand filter
+    if (selectedBrands.length > 0) {
+      params.set("brand", selectedBrands.join(","));
+    } else {
+      params.delete("brand");
+    }
+    
+    setSearchParams(params);
+
+    // Call onFilterChange if provided
+    if (onFilterChange) {
+      onFilterChange({
+        dressStyle: selectedCategory,
+        priceRange,
+        // Add other filters as needed
+      });
+    }
   };
   
-  const handleApplyFilter = () => {
-    onFilterChange({ priceRange });
+  // Handle price range change
+  const handlePriceChange = (value: number[]) => {
+    setPriceRange(value);
   };
   
-  const handleSelectColor = (color: string) => {
-    onFilterChange({ colors: activeFilters.colors === color ? null : color });
+  // Handle category selection
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category === selectedCategory ? "all" : category);
   };
   
-  const handleSelectSize = (size: string) => {
-    onFilterChange({ size: activeFilters.size === size ? null : size });
+  // Handle brand selection
+  const handleBrandChange = (brand: string) => {
+    setSelectedBrands(prev => 
+      prev.includes(brand) 
+        ? prev.filter(b => b !== brand) 
+        : [...prev, brand]
+    );
   };
   
-  const handleSelectDressStyle = (style: string) => {
-    onFilterChange({ dressStyle: style });
+  // Reset all filters
+  const resetFilters = () => {
+    setSelectedCategory("all");
+    setPriceRange([0, maxPrice]);
+    setSelectedBrands([]);
+    
+    const params = new URLSearchParams(searchParams);
+    params.delete("category");
+    params.delete("minPrice");
+    params.delete("maxPrice");
+    params.delete("brand");
+    setSearchParams(params);
+
+    // Call onFilterChange if provided
+    if (onFilterChange) {
+      onFilterChange({
+        dressStyle: "all",
+        priceRange: [0, maxPrice],
+        // Reset other filters as needed
+      });
+    }
   };
   
   return (
-    <div className={cn("w-full", className)}>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium text-lg">Filters</h3>
-        <SlidersHorizontal size={18} className="text-gray-500" />
-      </div>
-      
-      {/* Categories */}
-      <div className="mb-6">
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('categories')}
-        >
-          <span className="font-medium">Categories</span>
-          {filters.categories.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
-        </button>
-        
-        {filters.categories.open && (
-          <div className="py-2">
-            <button 
-              className="filter-item"
-              onClick={() => {}}
-            >
-              <span className="font-medium">T-shirts</span>
-              <ChevronDown size={18} className="text-gray-500" />
-            </button>
-            
-            <button 
-              className="filter-item"
-              onClick={() => {}}
-            >
-              <span className="font-medium">Shorts</span>
-              <ChevronDown size={18} className="text-gray-500" />
-            </button>
-            
-            <button 
-              className="filter-item"
-              onClick={() => {}}
-            >
-              <span className="font-medium">Shirts</span>
-              <ChevronDown size={18} className="text-gray-500" />
-            </button>
-            
-            <button 
-              className="filter-item"
-              onClick={() => {}}
-            >
-              <span className="font-medium">Hoodie</span>
-              <ChevronDown size={18} className="text-gray-500" />
-            </button>
-            
-            <button 
-              className="filter-item"
-              onClick={() => {}}
-            >
-              <span className="font-medium">Jeans</span>
-              <ChevronDown size={18} className="text-gray-500" />
-            </button>
-          </div>
-        )}
-      </div>
-      
-      {/* Price Range */}
-      <div className="mb-6">
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('price')}
-        >
-          <span className="font-medium">Price</span>
-          {filters.price.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
-        </button>
-        
-        {filters.price.open && (
-          <div className="py-4 px-1">
-            <Slider
-              value={priceRange}
-              min={0}
-              max={500}
-              step={1}
-              onValueChange={setPriceRange}
-              className="my-4"
-            />
-            <div className="flex justify-between items-center mt-2">
-              <span className="font-medium">${priceRange[0]}</span>
-              <span className="font-medium">${priceRange[1]}</span>
+    <div className={`space-y-6 ${className}`}>
+      <div>
+        <h3 className="text-lg font-semibold mb-3 dark:text-white">Price Range</h3>
+        <div className="px-2">
+          <Slider
+            defaultValue={priceRange}
+            value={priceRange}
+            max={maxPrice}
+            step={1}
+            onValueChange={handlePriceChange}
+            className="mb-6"
+          />
+          <div className="flex items-center space-x-4 mt-4">
+            <div>
+              <Label htmlFor="min-price" className="text-sm text-gray-500 dark:text-gray-400">Min</Label>
+              <Input
+                id="min-price"
+                type="number"
+                className="w-24 dark:bg-gray-800 dark:border-gray-700"
+                value={priceRange[0]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value >= 0) {
+                    setPriceRange([value, priceRange[1]]);
+                  }
+                }}
+              />
+            </div>
+            <div>
+              <Label htmlFor="max-price" className="text-sm text-gray-500 dark:text-gray-400">Max</Label>
+              <Input
+                id="max-price"
+                type="number"
+                className="w-24 dark:bg-gray-800 dark:border-gray-700"
+                value={priceRange[1]}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value);
+                  if (!isNaN(value) && value <= maxPrice) {
+                    setPriceRange([priceRange[0], value]);
+                  }
+                }}
+              />
             </div>
           </div>
-        )}
+        </div>
       </div>
       
-      {/* Colors */}
-      <div className="mb-6">
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('colors')}
-        >
-          <span className="font-medium">Colors</span>
-          {filters.colors.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
-        </button>
-        
-        {filters.colors.open && (
-          <div className="py-4 grid grid-cols-5 gap-3">
-            {colors.map((color) => (
-              <button
-                key={color.name}
-                className={`color-selector ${activeFilters.colors === color.name ? 'active' : ''}`}
-                style={{ backgroundColor: color.value }}
-                onClick={() => handleSelectColor(color.name)}
-                aria-label={`Select ${color.name} color`}
-              />
+      {categories.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-3 dark:text-white">Categories</h3>
+          <div className="space-y-1.5">
+            {categories.map((category) => (
+              <div key={category} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`category-${category}`}
+                  checked={selectedCategory === category}
+                  onCheckedChange={() => handleCategoryChange(category)}
+                />
+                <Label
+                  htmlFor={`category-${category}`}
+                  className="text-sm dark:text-gray-300"
+                >
+                  {category}
+                </Label>
+              </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
       
-      {/* Sizes */}
-      <div className="mb-6">
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('size')}
-        >
-          <span className="font-medium">Size</span>
-          {filters.size.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
-        </button>
-        
-        {filters.size.open && (
-          <div className="py-4 flex flex-wrap gap-2">
-            {sizes.map((size) => (
-              <button
-                key={size}
-                className={`size-selector ${activeFilters.size === size ? 'active' : ''}`}
-                onClick={() => handleSelectSize(size)}
-              >
-                {size}
-              </button>
+      {brands.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-3 dark:text-white">Brands</h3>
+          <div className="space-y-1.5">
+            {brands.map((brand) => (
+              <div key={brand} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`brand-${brand}`}
+                  checked={selectedBrands.includes(brand)}
+                  onCheckedChange={() => handleBrandChange(brand)}
+                />
+                <Label
+                  htmlFor={`brand-${brand}`}
+                  className="text-sm dark:text-gray-300"
+                >
+                  {brand}
+                </Label>
+              </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
       
-      {/* Dress Style */}
-      <div className="mb-6">
-        <button 
-          className="filter-item"
-          onClick={() => toggleSection('dressStyle')}
+      <div className="flex gap-2">
+        <Button
+          onClick={applyFilters}
+          className="flex-1"
         >
-          <span className="font-medium">Dress Style</span>
-          {filters.dressStyle.open ? <ChevronUp size={18} className="text-gray-500" /> : <ChevronDown size={18} className="text-gray-500" />}
-        </button>
-        
-        {filters.dressStyle.open && (
-          <div className="py-2">
-            {dressStyles.map(style => (
-              <button 
-                key={style}
-                className={`filter-item ${activeFilters.dressStyle === style ? 'font-bold' : ''}`}
-                onClick={() => handleSelectDressStyle(style)}
-              >
-                <span className="font-medium">{style}</span>
-                {activeFilters.dressStyle === style && <span className="text-xs bg-black text-white px-1.5 py-0.5 rounded">Selected</span>}
-              </button>
-            ))}
-          </div>
-        )}
+          Apply Filters
+        </Button>
+        <Button
+          variant="outline"
+          onClick={resetFilters}
+          className="flex-1 dark:border-gray-700 dark:text-gray-300"
+        >
+          Reset
+        </Button>
       </div>
-      
-      {/* Apply Filter Button */}
-      <Button 
-        className="w-full bg-black text-white rounded-full py-3 font-medium"
-        onClick={handleApplyFilter}
-      >
-        Apply Filter
-      </Button>
     </div>
   );
 };

@@ -1,422 +1,425 @@
+import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { ShoppingCart, Heart, Share2, Star, ChevronRight, ArrowRight, Check } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+import { toast } from 'sonner';
 
-import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { Star, Plus, Minus, ChevronDown, ChevronUp, CheckCircle2, SlidersHorizontal } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Announcement from "@/components/layout/Announcement";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import ProductCard from "@/components/ui/ProductCard";
-import ProductGallery from "@/components/ui/ProductGallery";
-import ReviewCard from "@/components/ui/ReviewCard";
-import { products, reviewsData } from "@/data/products";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { QuantityInput } from '@/components/ui/quantity-input';
+import ProductGallery from '@/components/ui/ProductGallery';
+import ProductReviews from '@/components/ui/product-reviews';
+import ProductFAQ from '@/components/ui/product-faq';
+import ScrollToTop from '@/components/ui/scroll-to-top';
+import { products, Product, reviewsData } from '@/data/products';
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [product, setProduct] = useState(products[0]); // Default to first product
-  
-  // Find the product by ID
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    const foundProduct = products.find(p => p.id === id);
+    const foundProduct = products.find((p) => p.id === id);
     if (foundProduct) {
       setProduct(foundProduct);
-      // Set default selections
-      setSelectedColor(foundProduct.colors[0]);
-      setSelectedSize(foundProduct.sizes[0]);
+      
+      if (foundProduct.colors && foundProduct.colors.length > 0) {
+        setSelectedColor(foundProduct.colors[0]);
+      }
+      if (foundProduct.sizes && foundProduct.sizes.length > 0) {
+        setSelectedSize(foundProduct.sizes[0]);
+      }
     }
-  }, [id]);
-  
-  // Reset scroll position
-  useEffect(() => {
+    
     window.scrollTo(0, 0);
   }, [id]);
-  
-  // Related products (random 4 products that are not the current one)
-  const relatedProducts = products
-    .filter(p => p.id !== id)
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 4);
-  
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-  
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-  
-  const addToCart = () => {
-    if (!selectedColor) {
-      toast({
-        title: "Please select a color",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (!selectedSize) {
-      toast({
-        title: "Please select a size",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Add to cart logic would go here
-    toast({
-      title: "Added to cart",
-      description: `${quantity} × ${product.name} added to your cart`,
-      action: (
-        <Button 
-          onClick={() => navigate('/cart')} 
-          variant="default" 
-          size="sm"
-          className="bg-primary text-white px-3 py-1 rounded-md text-xs"
-        >
-          View Cart
-        </Button>
-      ),
-    });
-  };
-  
-  // Color mapping for the UI
-  const colorMap: Record<string, string> = {
-    'white': '#ffffff',
-    'black': '#000000',
-    'red': '#ef4444',
-    'blue': '#3b82f6',
-    'green': '#22c55e',
-    'yellow': '#eab308',
-    'purple': '#a855f7',
-    'pink': '#ec4899',
-    'orange': '#f97316',
-    'gray': '#9ca3af',
-    'brown': '#92400e',
-  };
-  
+
   if (!product) {
-    return <div>Product not found</div>;
+    return (
+      <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Product not found</h2>
+          <p className="mb-8">Sorry, we couldn't find the product you're looking for.</p>
+          <Button asChild>
+            <Link to="/products">Continue Shopping</Link>
+          </Button>
+        </div>
+      </div>
+    );
   }
+
+  const handleAddToCart = () => {
+    if (!selectedColor) {
+      toast.error("Please select a color.");
+      return;
+    }
+
+    if (!selectedSize) {
+      toast.error("Please select a size.");
+      return;
+    }
+
+    setIsLoading(true);
+    
+    setTimeout(() => {
+      toast.success("Item added to your cart!");
+      setIsLoading(false);
+    }, 600);
+  };
+
+  const getColorHex = (colorName: string) => {
+    const colorMap: Record<string, string> = {
+      'white': '#ffffff',
+      'black': '#000000',
+      'blue': '#0066cc',
+      'red': '#ff0000',
+      'green': '#00a651',
+      'yellow': '#ffff00',
+      'purple': '#800080',
+      'gray': '#808080',
+      'brown': '#92400e',
+      'orange': '#ffa500',
+      'khaki': '#c3b091',
+    };
+
+    return colorMap[colorName.toLowerCase()] || '#cccccc';
+  };
+
+  const defaultFaqs = [
+    {
+      question: "What sizes are available?",
+      answer: "We offer sizes ranging from XS to 3XL. Please refer to our size guide to find your perfect fit."
+    },
+    {
+      question: "How do I care for this item?",
+      answer: "For best results, machine wash cold with like colors, gentle cycle. Tumble dry low. Do not bleach. Iron on low if needed."
+    },
+    {
+      question: "What is the return policy?",
+      answer: "We offer a 30-day return policy for unworn items in original condition with tags attached. Please see our Returns page for more details."
+    },
+    {
+      question: "How long will shipping take?",
+      answer: "Standard shipping takes 3-5 business days. Express shipping takes 1-2 business days. International shipping may take 7-14 business days."
+    },
+    {
+      question: "Is this true to size?",
+      answer: "Yes, this item is true to size for most customers. If you're between sizes, we recommend sizing up for a more comfortable fit."
+    }
+  ];
+
+  const ratings = [
+    { stars: 5, count: Math.round(reviewsData.filter(r => r.rating === 5).length) },
+    { stars: 4, count: Math.round(reviewsData.filter(r => r.rating === 4).length) },
+    { stars: 3, count: Math.round(reviewsData.filter(r => r.rating === 3).length) },
+    { stars: 2, count: Math.round(reviewsData.filter(r => r.rating === 2).length) },
+    { stars: 1, count: Math.round(reviewsData.filter(r => r.rating === 1).length) }
+  ];
   
+  const reviews = reviewsData.map(review => ({
+    id: review.id,
+    customerName: review.name,
+    rating: review.rating,
+    date: review.date,
+    verified: review.verified,
+    comment: review.comment,
+    helpful: 0
+  }));
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Announcement />
-      <Navbar />
-      
-      <main className="flex-grow">
-        {/* Breadcrumb */}
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex text-sm items-center">
-            <Link to="/" className="text-gray-500 hover:text-black">Home</Link>
-            <span className="mx-2 text-gray-400">&gt;</span>
-            <Link to="/products" className="text-gray-500 hover:text-black">Shop</Link>
-            <span className="mx-2 text-gray-400">&gt;</span>
-            <Link to={`/products?category=${product.category}`} className="text-gray-500 hover:text-black">{product.category}</Link>
-            <span className="mx-2 text-gray-400">&gt;</span>
-            <span className="font-medium">{product.name}</span>
+    <>
+      <Helmet>
+        <title>{product.name} | Lovable Store</title>
+        <meta name="description" content={product.description} />
+      </Helmet>
+      <ScrollToTop />
+
+      <div className="container mx-auto px-4 py-8">
+        <nav className="flex mb-6 text-sm">
+          <ol className="flex items-center space-x-1">
+            <li>
+              <Link to="/" className="text-gray-500 hover:text-gray-700">Home</Link>
+            </li>
+            <li>
+              <span className="mx-1"><ChevronRight className="h-4 w-4" /></span>
+            </li>
+            <li>
+              <Link to="/products" className="text-gray-500 hover:text-gray-700">Products</Link>
+            </li>
+            <li>
+              <span className="mx-1"><ChevronRight className="h-4 w-4" /></span>
+            </li>
+            <li>
+              <Link to={`/products?category=${product.category.toLowerCase()}`} className="text-gray-500 hover:text-gray-700">{product.category}</Link>
+            </li>
+            <li>
+              <span className="mx-1"><ChevronRight className="h-4 w-4" /></span>
+            </li>
+            <li>
+              <span className="font-medium text-gray-900">{product.name}</span>
+            </li>
+          </ol>
+        </nav>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div>
+            <ProductGallery images={product.images} name={product.name} />
+          </div>
+
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold">{product.name}</h1>
+              <div className="flex items-center mt-2 space-x-4">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star 
+                      key={i} 
+                      fill={i < Math.floor(product.rating) ? "currentColor" : "none"} 
+                      className={`h-5 w-5 ${i < Math.floor(product.rating) ? "text-yellow-400" : "text-gray-300"}`}
+                    />
+                  ))}
+                  <span className="ml-2 text-sm font-medium">{product.rating} ({product.reviews})</span>
+                </div>
+                <Separator orientation="vertical" className="h-5" />
+                <span className="text-sm">{product.reviews} reviews</span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
+              {product.originalPrice && (
+                <span className="text-lg text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
+              )}
+              {product.discount && (
+                <Badge variant="destructive" className="text-xs">{product.discount}% OFF</Badge>
+              )}
+            </div>
+
+            <p className="text-gray-700">{product.description}</p>
+
+            <div>
+              <h3 className="text-sm font-medium mb-2">Color: <span className="font-normal">{selectedColor}</span></h3>
+              <div className="flex space-x-3">
+                {product.colors.map((color) => (
+                  <button
+                    key={color}
+                    className={`w-10 h-10 rounded-full focus:outline-none border-2 ${
+                      selectedColor === color ? 'ring-2 ring-offset-2 ring-black' : 'ring-transparent'
+                    }`}
+                    style={{ backgroundColor: getColorHex(color) }}
+                    onClick={() => setSelectedColor(color)}
+                    title={color}
+                  >
+                    {selectedColor === color && color.toLowerCase() === 'white' && (
+                      <Check className="w-5 h-5 text-black mx-auto" />
+                    )}
+                    {selectedColor === color && color.toLowerCase() !== 'white' && (
+                      <Check className="w-5 h-5 text-white mx-auto" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium">Size: <span className="font-normal">{selectedSize}</span></h3>
+                <button className="text-sm underline">Size Guide</button>
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    className={`border rounded py-2 text-center text-sm focus:outline-none ${
+                      selectedSize === size
+                        ? 'bg-black text-white'
+                        : 'bg-white hover:bg-gray-50'
+                    }`}
+                    onClick={() => setSelectedSize(size)}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium mb-2">Quantity:</h3>
+              <QuantityInput 
+                value={quantity} 
+                onValueChange={setQuantity} 
+                min={1} 
+                max={10} 
+              />
+            </div>
+
+            <div className="flex space-x-4">
+              <Button className="flex-1" onClick={handleAddToCart} disabled={isLoading}>
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Adding...
+                  </span>
+                ) : (
+                  <>
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Add to Cart
+                  </>
+                )}
+              </Button>
+              <Button variant="outline" size="icon">
+                <Heart className="h-5 w-5" />
+              </Button>
+              <Button variant="outline" size="icon">
+                <Share2 className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="border-t border-b py-4 space-y-2">
+              <div className="flex items-center">
+                <Check className="h-4 w-4 mr-2 text-green-600" />
+                <span className="text-sm">Free shipping over $100</span>
+              </div>
+              <div className="flex items-center">
+                <Check className="h-4 w-4 mr-2 text-green-600" />
+                <span className="text-sm">30 days return policy</span>
+              </div>
+              <div className="flex items-center">
+                <Check className="h-4 w-4 mr-2 text-green-600" />
+                <span className="text-sm">100% secure checkout</span>
+              </div>
+            </div>
+
+            <div>
+              <Button variant="link" className="flex items-center p-0 text-sm">
+                <span>View full details</span>
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
         
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {/* Product Images */}
-            <div>
-              <ProductGallery images={[...product.images, ...product.images]} name={product.name} />
-            </div>
+        <div className="mt-16">
+          <Tabs defaultValue="description" className="w-full">
+            <TabsList className="grid grid-cols-3 max-w-lg mx-auto mb-8">
+              <TabsTrigger value="description">Description</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews ({product.reviews})</TabsTrigger>
+              <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
+            </TabsList>
             
-            {/* Product Details */}
-            <div>
-              <h1 className="text-2xl md:text-4xl font-bold mb-2">{product.name.toUpperCase()}</h1>
-              
-              {/* Rating */}
-              <div className="flex items-center mb-4">
-                <div className="flex mr-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      size={16}
-                      className={i < Math.floor(product.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
-                    />
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500">
-                  {product.rating}/5 ({product.reviews} reviews)
-                </span>
-              </div>
-              
-              {/* Price */}
-              <div className="flex items-center mb-6">
-                <span className="text-2xl font-bold mr-3">${product.price}</span>
-                {product.originalPrice && (
-                  <>
-                    <span className="text-gray-400 line-through mr-2">${product.originalPrice}</span>
-                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">-{product.discount}%</span>
-                  </>
-                )}
-              </div>
-              
-              {/* Description */}
-              <p className="text-gray-600 mb-8">
-                {product.description}
-              </p>
-              
-              {/* Color Selection */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium mb-3">Select Colors</h3>
-                <div className="flex space-x-3">
-                  {product.colors.map(color => (
-                    <button
-                      key={color}
-                      className={`color-selector ${selectedColor === color ? 'active' : ''}`}
-                      style={{ backgroundColor: colorMap[color] || color }}
-                      onClick={() => setSelectedColor(color)}
-                      aria-label={`Select ${color} color`}
-                    />
-                  ))}
-                </div>
-              </div>
-              
-              {/* Size Selection */}
-              <div className="mb-8">
-                <h3 className="text-sm font-medium mb-3">Choose Size</h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map(size => (
-                    <button
-                      key={size}
-                      className={`size-selector ${selectedSize === size ? 'active' : ''}`}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Quantity and Add to Cart */}
-              <div className="flex items-center mb-8">
-                <div className="quantity-input mr-4">
-                  <button 
-                    onClick={decreaseQuantity}
-                    aria-label="Decrease quantity"
-                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <span className="w-8 text-center font-medium">{quantity}</span>
-                  <button 
-                    onClick={increaseQuantity}
-                    aria-label="Increase quantity"
-                    className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black transition-colors"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
-                
-                <Button 
-                  onClick={addToCart}
-                  className="flex-1 bg-black text-white rounded-full py-3 font-medium hover:bg-black/90 transition-colors"
-                >
-                  Add to Cart
-                </Button>
-              </div>
-              
-              {/* Additional Info (Delivery, etc.) */}
-              <div className="space-y-4 border-t border-gray-200 pt-6">
-                <div className="flex items-center text-sm">
-                  <CheckCircle2 size={16} className="mr-2 text-green-500" />
-                  <span>Free shipping on orders over $50</span>
-                </div>
-                <div className="flex items-center text-sm">
-                  <CheckCircle2 size={16} className="mr-2 text-green-500" />
-                  <span>Free returns within 30 days</span>
-                </div>
-                <div className="flex items-center text-sm">
-                  <CheckCircle2 size={16} className="mr-2 text-green-500" />
-                  <span>Secure payment guaranteed</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Product Details, Reviews, FAQs Tabs */}
-          <div className="mb-16">
-            <Tabs defaultValue="reviews">
-              <div className="border-b border-gray-200">
-                <TabsList className="flex w-full bg-transparent justify-center md:justify-start">
-                  <TabsTrigger 
-                    value="details"
-                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
-                  >
-                    Product Details
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="reviews"
-                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
-                  >
-                    Rating & Reviews
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="faqs"
-                    className="px-8 py-4 text-base data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:shadow-none data-[state=active]:bg-transparent rounded-none"
-                  >
-                    FAQs
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-              
-              <TabsContent value="details" className="py-6">
-                <div className="max-w-3xl mx-auto">
-                  <h3 className="text-xl font-bold mb-4">Product Information</h3>
-                  <p className="text-gray-600 mb-6">
-                    {product.description}
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-medium mb-2">Materials</h4>
-                      <p className="text-gray-600">
-                        Our products are crafted from premium, sustainable materials to ensure comfort and durability.
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-2">Care Instructions</h4>
-                      <p className="text-gray-600">
-                        Machine wash cold with similar colors. Tumble dry low. Do not bleach. Iron if needed on low heat.
-                      </p>
-                    </div>
+            <TabsContent value="description" className="space-y-8">
+              <div className="max-w-3xl mx-auto">
+                <h2 className="text-2xl font-bold mb-4">Product Details</h2>
+                <p className="mb-4">{product.description}</p>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="font-medium mb-2">Features</h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-600">
+                      <li>Premium quality material</li>
+                      <li>Comfortable fit</li>
+                      <li>Durable stitching</li>
+                      <li>Easy to care for</li>
+                      <li>Stylish design</li>
+                    </ul>
                   </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="reviews" className="py-6">
-                <div className="max-w-4xl mx-auto">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold">All Reviews <span className="text-gray-500 font-normal">({reviewsData.length})</span></h3>
-                    
-                    <div className="flex items-center space-x-3">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="border rounded-md flex items-center px-3"
-                      >
-                        <SlidersHorizontal size={16} className="mr-2" />
-                        Latest
-                        <ChevronDown size={16} className="ml-2" />
-                      </Button>
-                      
-                      <Button className="bg-black text-white rounded-full px-4 py-2 text-sm">
-                        Write a Review
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    {reviewsData.map((review) => (
-                      <ReviewCard
-                        key={review.id}
-                        name={review.name}
-                        rating={review.rating}
-                        date={review.date}
-                        comment={review.comment}
-                        verified={review.verified}
-                      />
-                    ))}
-                  </div>
-                  
-                  <div className="text-center mt-8">
-                    <Button variant="outline" className="px-6 py-2 rounded-md">
-                      Load More Reviews
-                    </Button>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="faqs" className="py-6">
-                <div className="max-w-3xl mx-auto">
-                  <h3 className="text-xl font-bold mb-6">Frequently Asked Questions</h3>
-                  
-                  <div className="space-y-4">
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>What sizes are available?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                      <div className="mt-2 text-gray-600">
-                        We offer sizes ranging from XS to 3XL. Please refer to our size guide to find your perfect fit.
+                  <div>
+                    <h3 className="font-medium mb-2">Specifications</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="grid grid-cols-2 gap-2">
+                        <span className="text-gray-600">Material</span>
+                        <span>100% Cotton</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <span className="text-gray-600">Style</span>
+                        <span>{product.dressStyle.join(', ')}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <span className="text-gray-600">Neck Type</span>
+                        <span>Round Neck</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <span className="text-gray-600">Sleeve</span>
+                        <span>Short Sleeve</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <span className="text-gray-600">Care</span>
+                        <span>Machine Wash</span>
                       </div>
                     </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>How do I care for this product?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>What is your return policy?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>How long does shipping take?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
-                    
-                    <div className="border-b border-gray-200 pb-4">
-                      <button 
-                        className="flex justify-between items-center w-full text-left font-medium"
-                        onClick={() => {}}
-                      >
-                        <span>Do you ship internationally?</span>
-                        <ChevronDown size={18} />
-                      </button>
-                    </div>
                   </div>
                 </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-          
-          {/* You Might Also Like */}
-          <div className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">YOU MIGHT ALSO LIKE</h2>
+                  
+                <div className="mt-16">
+                  <style>
+                    {`
+                    .faq-answer {
+                      max-height: 0;
+                      overflow: hidden;
+                      transition: max-height 0.3s ease-out;
+                    }
+                    .faq-active .faq-answer {
+                      max-height: 500px;
+                      transition: max-height 0.5s ease-in;
+                    }
+                  `}
+                  </style>
+                  <ProductFAQ faqs={product.faqs || defaultFaqs} />
+                </div>
+              </div>
+            </TabsContent>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {relatedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          </div>
+            <TabsContent value="reviews">
+              <div className="max-w-3xl mx-auto">
+                <ProductReviews 
+                  overallRating={product.rating}
+                  totalReviews={product.reviews}
+                  ratings={ratings} 
+                  reviews={reviews} 
+                />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="shipping">
+              <div className="max-w-3xl mx-auto">
+                <h2 className="text-2xl font-bold mb-4">Shipping & Returns</h2>
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Shipping Information</h3>
+                    <p className="mb-4">We offer the following shipping options:</p>
+                    <ul className="list-disc list-inside space-y-2 ml-4">
+                      <li><span className="font-medium">Standard Shipping:</span> 3-5 business days (Free on orders over $100)</li>
+                      <li><span className="font-medium">Express Shipping:</span> 1-2 business days ($15)</li>
+                      <li><span className="font-medium">International Shipping:</span> 7-14 business days (Rates calculated at checkout)</li>
+                    </ul>
+                    <p className="mt-4">Orders are processed and shipped Monday-Friday, excluding holidays. Orders placed after 12 PM may be processed the following business day.</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Return Policy</h3>
+                    <p className="mb-4">We want you to be completely satisfied with your purchase. If you're not happy with your order, we accept returns under the following conditions:</p>
+                    <ul className="list-disc list-inside space-y-2 ml-4">
+                      <li>Items must be returned within 30 days of delivery</li>
+                      <li>Products must be unworn, unwashed, and in original condition with tags attached</li>
+                      <li>Return shipping costs are the responsibility of the customer</li>
+                      <li>Sale items can only be exchanged for store credit</li>
+                    </ul>
+                    <p className="mt-4">To initiate a return, please contact our customer service team at support@example.com or visit your account page.</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
-      </main>
-      
-      <Footer />
-    </div>
+      </div>
+    </>
   );
 };
 

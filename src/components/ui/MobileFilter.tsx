@@ -1,49 +1,35 @@
 
-import { X } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import FilterSidebar from "./FilterSidebar";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-interface MobileFilterProps {
-  isOpen: boolean;
+export interface MobileFilterProps {
+  open: boolean;
   onClose: () => void;
-  activeFilters: {
-    dressStyle: string;
-    colors: string | null;
-    size: string | null;
-    priceRange: number[];
-  };
-  onFilterChange: (filters: any) => void;
+  children: React.ReactNode;
 }
 
-const MobileFilter: React.FC<MobileFilterProps> = ({ 
-  isOpen, 
-  onClose, 
-  activeFilters, 
-  onFilterChange 
-}) => {
-  const handleFilterChange = (filters) => {
-    onFilterChange(filters);
-  };
-
+const MobileFilter = ({ open, onClose, children }: MobileFilterProps) => {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] p-0 h-[90vh] max-h-[900px] overflow-auto">
-        <div className="sticky top-0 bg-white z-10 flex items-center justify-between p-4 border-b">
-          <h2 className="font-medium text-lg">Filters</h2>
-          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
-            <X size={20} />
+    <Sheet open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) onClose();
+    }}>
+      <SheetContent side="left" className="w-full max-w-md">
+        <SheetHeader>
+          <SheetTitle className="text-left">Filters</SheetTitle>
+        </SheetHeader>
+        <div className="mt-6 flex flex-col h-[calc(100vh-10rem)] overflow-y-auto pb-20">
+          {children}
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-background border-t">
+          <Button 
+            onClick={onClose}
+            className="w-full"
+          >
+            Apply Filters
           </Button>
         </div>
-        
-        <div className="p-4">
-          <FilterSidebar 
-            activeFilters={activeFilters}
-            onFilterChange={handleFilterChange}
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
 
