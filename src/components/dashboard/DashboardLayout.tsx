@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { UserButton } from "@clerk/clerk-react";
 import {
   LayoutDashboard,
   Package,
@@ -142,7 +141,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   const handleLogout = () => {
-    // In a real app with Clerk, you would use signOut()
     toast({
       title: "Logging out",
       description: "You have been logged out successfully.",
@@ -231,7 +229,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               {isMobileMenuOpen ? <X /> : <Menu />}
             </Button>
             <h1 className="text-xl font-bold">E-Shop Admin</h1>
-            <UserButton afterSignOutUrl="/" />
+            <Avatar>
+              <AvatarImage src="/placeholder.svg" />
+              <AvatarFallback>AD</AvatarFallback>
+            </Avatar>
           </div>
           {isMobileMenuOpen && (
             <div className="bg-white dark:bg-gray-900 p-4 border-t border-gray-200 dark:border-gray-800">

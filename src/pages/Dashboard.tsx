@@ -1,11 +1,9 @@
 
 import { Helmet } from "react-helmet-async";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 
 const Dashboard = () => {
-  const location = useLocation();
-  
   return (
     <>
       <Helmet>
