@@ -88,7 +88,7 @@ const productFormSchema = z.object({
   price: z.coerce.number().min(0.01, { message: "Price must be greater than 0" }),
   category: z.string().min(1, { message: "Category is required" }),
   discount: z.coerce.number().min(0).max(100, { message: "Discount must be between 0 and 100" }).optional(),
-  stock: z.coerce.number().min(0, { message: "Stock cannot be negative" }),
+  inStock: z.coerce.number().min(0, { message: "Stock cannot be negative" }),
   images: z.array(z.string()).min(1, { message: "At least one image is required" })
 });
 
@@ -121,7 +121,7 @@ const ProductsManagement = () => {
       price: 0,
       category: "",
       discount: 0,
-      stock: 0,
+      inStock: 0,
       images: ["/placeholder.svg"]
     }
   });
@@ -148,7 +148,7 @@ const ProductsManagement = () => {
     const matchesCategory = categoryFilter ? product.category === categoryFilter : true;
     
     const matchesStatus = statusFilter 
-      ? (statusFilter === "on-sale" ? product.discount > 0 : product.discount === 0)
+      ? (statusFilter === "on-sale" ? product.discount && product.discount > 0 : !product.discount || product.discount === 0)
       : true;
 
     return matchesSearch && matchesCategory && matchesStatus;
@@ -213,7 +213,7 @@ const ProductsManagement = () => {
       price: product.price,
       category: product.category,
       discount: product.discount || 0,
-      stock: product.stock,
+      inStock: product.inStock,
       images: product.images
     });
     setIsEditDialogOpen(true);
@@ -227,7 +227,7 @@ const ProductsManagement = () => {
       price: 0,
       category: "",
       discount: 0,
-      stock: 0,
+      inStock: 0,
       images: ["/placeholder.svg"]
     });
     setIsAddDialogOpen(true);
@@ -259,9 +259,13 @@ const ProductsManagement = () => {
         category: data.category,
         discount: data.discount || 0,
         images: data.images,
-        stock: data.stock,
+        inStock: data.inStock,
         rating: 0,
-        reviews: []
+        reviews: 0,
+        brand: "Lovable",
+        colors: ["black", "white"],
+        sizes: ["S", "M", "L"],
+        dressStyle: ["Casual"]
       };
       
       setProducts([newProduct, ...products]);
@@ -412,7 +416,7 @@ const ProductsManagement = () => {
                     <TableHead>
                       <Button 
                         variant="ghost" 
-                        onClick={() => handleSort('stock')}
+                        onClick={() => handleSort('inStock')}
                         className="flex items-center font-semibold"
                       >
                         Stock
@@ -441,10 +445,10 @@ const ProductsManagement = () => {
                         <TableCell>{formatPrice(product.price)}</TableCell>
                         <TableCell>
                           <div className="flex items-center">
-                            <span className={product.stock < 10 ? "text-destructive" : ""}>
-                              {product.stock}
+                            <span className={product.inStock < 10 ? "text-destructive" : ""}>
+                              {product.inStock}
                             </span>
-                            {product.stock < 10 && (
+                            {product.inStock < 10 && (
                               <Badge variant="outline" className="ml-2 text-xs">Low</Badge>
                             )}
                           </div>
@@ -657,7 +661,7 @@ const ProductsManagement = () => {
                   
                   <FormField
                     control={form.control}
-                    name="stock"
+                    name="inStock"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Stock</FormLabel>
