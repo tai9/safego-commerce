@@ -32,7 +32,7 @@ export const products: Product[] = [
     reviews: 123,
     colors: ["white", "black", "blue"],
     sizes: ["S", "M", "L", "XL"],
-    images: ["//lovable-uploads/Gradient Graphic T-shirt.png"],
+    images: ["/lovable-uploads/Gradient Graphic T-shirt.png"],
     description:
       "This graphic t-shirt features a vibrant gradient design. Made from premium cotton for all-day comfort.",
     dressStyle: ["Casual"],

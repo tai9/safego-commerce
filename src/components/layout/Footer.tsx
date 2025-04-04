@@ -21,9 +21,9 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-white pt-16 pb-8 border-t border-gray-100">
+    <footer className="bg-white dark:bg-black pt-16 pb-8 border-t border-gray-100">
       {/* Newsletter */}
-      <div className="bg-black text-white rounded-xl py-10 px-8 md:p-12 mx-4 md:mx-8 mb-16 relative overflow-hidden">
+      <div className="bg-black dark:bg-secondary text-white  rounded-xl py-10 px-8 md:p-12 mx-4 md:mx-8 mb-16 relative overflow-hidden">
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left">
@@ -109,9 +109,9 @@ const Footer = () => {
               to="/"
               className="font-heading text-2xl font-black tracking-tighter mb-4 inline-block"
             >
-              SHOP.CO
+              Safego
             </Link>
-            <p className="text-sm text-gray-600 mt-4 mb-6 max-w-xs">
+            <p className="text-sm text-gray-600 dark:text-white mt-4 mb-6 max-w-xs">
               We have clothes that suits your style and which you're proud to
               wear. From women to men.
             </p>
@@ -158,7 +158,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/about"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   About
                 </Link>
@@ -166,7 +166,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/features"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Features
                 </Link>
@@ -174,7 +174,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/works"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Works
                 </Link>
@@ -182,7 +182,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/career"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Career
                 </Link>
@@ -197,7 +197,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/support"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Customer Support
                 </Link>
@@ -205,7 +205,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/delivery"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Delivery Details
                 </Link>
@@ -213,7 +213,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/terms"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Terms & Conditions
                 </Link>
@@ -221,7 +221,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/privacy"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-gray-600 dark:text-white hover:text-black transition-colors"
                 >
                   Privacy Policy
                 </Link>
@@ -237,7 +237,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/account"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Account
                   </Link>
@@ -245,7 +245,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/deliveries"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Manage Deliveries
                   </Link>
@@ -253,7 +253,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/orders"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Orders
                   </Link>
@@ -261,7 +261,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/payments"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Payments
                   </Link>
@@ -275,7 +275,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/ebooks"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Free eBooks
                   </Link>
@@ -283,7 +283,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/tutorial"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Development Tutorial
                   </Link>
@@ -291,7 +291,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/blog"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     How to - Blog
                   </Link>
@@ -299,7 +299,7 @@ const Footer = () => {
                 <li>
                   <Link
                     to="/playlist"
-                    className="text-gray-600 hover:text-black transition-colors"
+                    className="text-gray-600 dark:text-white hover:text-black transition-colors"
                   >
                     Youtube Playlist
                   </Link>
@@ -312,7 +312,7 @@ const Footer = () => {
         {/* Copyright & Payment Methods */}
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-500 mb-4 md:mb-0">
-            Shop.co © 2000-{new Date().getFullYear()}, All Rights Reserved
+            Safego © 2000-{new Date().getFullYear()}, All Rights Reserved
           </p>
 
           <div className="flex items-center space-x-3">
