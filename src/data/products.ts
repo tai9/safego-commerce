@@ -1,19 +1,23 @@
-
 export interface Product {
   id: string;
   name: string;
-  category: string;
   price: number;
   originalPrice?: number;
   discount?: number;
-  rating: number;
-  reviews: number;
+  description: string;
+  images: string[];
+  category: string;
+  brand: string;
   colors: string[];
   sizes: string[];
-  images: string[];
-  description: string;
   dressStyle: string[];
-  faqs?: { question: string; answer: string; }[];
+  rating: number;
+  reviews: number;
+  inStock: number;
+  isFeatured?: boolean;
+  isOnSale?: boolean;
+  isNewArrival?: boolean;
+  faqs?: { question: string; answer: string }[];
 }
 
 export const products: Product[] = [
@@ -30,7 +34,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     images: ["/lovable-uploads/cd011f2c-675c-4750-8cc2-421974b43274.png"],
     description: "This graphic t-shirt features a vibrant gradient design. Made from premium cotton for all-day comfort.",
-    dressStyle: ["Casual"]
+    dressStyle: ["Casual"],
+    brand: "Lovable",
+    inStock: 100,
+    isFeatured: true,
+    isOnSale: true,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in white, black, and blue" }
+    ]
   },
   {
     id: "2",
@@ -45,7 +58,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL", "XXL"],
     images: ["/lovable-uploads/6d530bed-3330-4e6e-bc5f-4ae73f4b2063.png"],
     description: "A classic polo shirt with contrasting tipping details on the collar and sleeves for a sophisticated look.",
-    dressStyle: ["Casual", "Formal"]
+    dressStyle: ["Casual", "Formal"],
+    brand: "Lovable",
+    inStock: 150,
+    isFeatured: false,
+    isOnSale: false,
+    isNewArrival: true,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in red, blue, and green" }
+    ]
   },
   {
     id: "3",
@@ -60,7 +82,16 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L", "XL"],
     images: ["/lovable-uploads/1a91bd17-7194-498a-acf3-4dc18daa248e.png"],
     description: "A stylish striped t-shirt with a classic design. Perfect for casual everyday wear.",
-    dressStyle: ["Casual"]
+    dressStyle: ["Casual"],
+    brand: "Lovable",
+    inStock: 200,
+    isFeatured: true,
+    isOnSale: false,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in black, white, and gray" }
+    ]
   },
   {
     id: "4",
@@ -75,7 +106,16 @@ export const products: Product[] = [
     sizes: ["28", "30", "32", "34", "36"],
     images: ["/lovable-uploads/64341d02-b9c7-4e17-a103-2435e22dd3ef.png"],
     description: "Modern skinny fit jeans with a comfortable stretch. Sleek design for a contemporary look.",
-    dressStyle: ["Casual", "Party"]
+    dressStyle: ["Casual", "Party"],
+    brand: "Lovable",
+    inStock: 100,
+    isFeatured: false,
+    isOnSale: true,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in blue, black, and gray" }
+    ]
   },
   {
     id: "5",
@@ -88,7 +128,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     images: ["/lovable-uploads/50e38023-1ab4-4395-a99a-ef9d85a27d9d.png"],
     description: "A versatile checkered shirt that can be dressed up or down. Made from soft cotton fabric.",
-    dressStyle: ["Casual", "Formal"]
+    dressStyle: ["Casual", "Formal"],
+    brand: "Lovable",
+    inStock: 150,
+    isFeatured: true,
+    isOnSale: false,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in red, blue, and green" }
+    ]
   },
   {
     id: "6",
@@ -103,7 +152,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     images: ["/lovable-uploads/4cbbba7d-483f-4592-8429-560b25ec214f.png"],
     description: "A stylish t-shirt with contrasting striped sleeves for a sporty, casual look.",
-    dressStyle: ["Casual", "Gym"]
+    dressStyle: ["Casual", "Gym"],
+    brand: "Lovable",
+    inStock: 200,
+    isFeatured: false,
+    isOnSale: true,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in orange, blue, and black" }
+    ]
   },
   {
     id: "7",
@@ -118,7 +176,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL", "XXL"],
     images: ["/lovable-uploads/89e9b281-82ec-42ce-b4ae-47c6c08e9020.png"],
     description: "An elegant vertical striped shirt. Perfect for both casual and formal occasions.",
-    dressStyle: ["Casual", "Formal"]
+    dressStyle: ["Casual", "Formal"],
+    brand: "Lovable",
+    inStock: 100,
+    isFeatured: true,
+    isOnSale: false,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in green, blue, and black" }
+    ]
   },
   {
     id: "8",
@@ -131,7 +198,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     images: ["/lovable-uploads/afe12d1f-a5cc-44be-92ef-ccc0151fbf02.png"],
     description: "Express yourself with this bold graphic t-shirt featuring an inspiring 'Courage' design.",
-    dressStyle: ["Casual", "Party"]
+    dressStyle: ["Casual", "Party"],
+    brand: "Lovable",
+    inStock: 150,
+    isFeatured: false,
+    isOnSale: true,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in orange, white, and black" }
+    ]
   },
   {
     id: "9",
@@ -144,7 +220,16 @@ export const products: Product[] = [
     sizes: ["28", "30", "32", "34", "36"],
     images: ["/lovable-uploads/1aeccf89-6964-414c-842b-74ca991739fc.png"],
     description: "Comfortable loose fit bermuda shorts, perfect for casual summer days.",
-    dressStyle: ["Casual", "Gym"]
+    dressStyle: ["Casual", "Gym"],
+    brand: "Lovable",
+    inStock: 200,
+    isFeatured: true,
+    isOnSale: false,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in blue, khaki, and black" }
+    ]
   },
   {
     id: "10",
@@ -159,7 +244,16 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     images: ["/lovable-uploads/50e38023-1ab4-4395-a99a-ef9d85a27d9d.png"],
     description: "This graphic t-shirt which is perfect for any occasion. Crafted from a soft and breathable fabric, it offers superior comfort and style.",
-    dressStyle: ["Casual", "Party"]
+    dressStyle: ["Casual", "Party"],
+    brand: "Lovable",
+    inStock: 100,
+    isFeatured: false,
+    isOnSale: true,
+    isNewArrival: false,
+    faqs: [
+      { question: "What is the fabric used in this t-shirt?", answer: "Premium cotton" },
+      { question: "Is this t-shirt available in other colors?", answer: "Yes, available in brown, green, and blue" }
+    ]
   }
 ];
 

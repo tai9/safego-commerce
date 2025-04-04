@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Star, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -15,7 +14,7 @@ export interface Review {
   rating: number;
   date: string;
   comment: string;
-  helpful: number;
+  helpful?: number;
   customerImage?: string;
   verified?: boolean;
 }
@@ -39,14 +38,12 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
     ? reviews.filter(review => review.rating === currentFilter) 
     : reviews;
   
-  // Convert ratings to percentages for progress bars
   const calculatePercentage = (count: number) => {
     return (count / totalReviews) * 100;
   };
   
   return (
     <div className="space-y-10">
-      {/* Rating Summary */}
       <div className="flex flex-col md:flex-row gap-10">
         <div className="md:w-1/3 flex flex-col items-center justify-center space-y-4">
           <div className="text-5xl font-bold dark:text-white">{overallRating.toFixed(1)}</div>
@@ -86,7 +83,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
         </div>
       </div>
       
-      {/* Filter indicator */}
       {currentFilter && (
         <div className="flex items-center justify-between bg-secondary/50 p-3 rounded-md">
           <div className="text-sm">
@@ -101,7 +97,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
         </div>
       )}
       
-      {/* Reviews List */}
       <div className="space-y-6">
         {filteredReviews.length > 0 ? (
           filteredReviews.map((review) => (

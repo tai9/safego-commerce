@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Line, Bar } from "recharts";
+import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -178,25 +178,20 @@ const DashboardOverview = () => {
               <CardTitle>Revenue Overview</CardTitle>
             </CardHeader>
             <CardContent className="h-[300px]">
-              <Line
-                data={revenueData}
-                width={500}
-                height={300}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <Line
-                  type="monotone"
-                  dataKey="total"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </Line>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueData}>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#8884d8"
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
           <Card className="col-span-3">

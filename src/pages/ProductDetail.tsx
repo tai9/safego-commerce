@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingCart, Heart, Share2, Star, ChevronRight, ArrowRight, Check } from 'lucide-react';
@@ -17,7 +16,6 @@ import ScrollToTop from '@/components/ui/scroll-to-top';
 import { products, Product, reviewsData } from '@/data/products';
 
 const ProductDetail = () => {
-  // Get the product ID from URL params
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [selectedColor, setSelectedColor] = useState('');
@@ -26,12 +24,10 @@ const ProductDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Simulate API call to fetch product details
     const foundProduct = products.find((p) => p.id === id);
     if (foundProduct) {
       setProduct(foundProduct);
       
-      // Set default selections
       if (foundProduct.colors && foundProduct.colors.length > 0) {
         setSelectedColor(foundProduct.colors[0]);
       }
@@ -40,7 +36,6 @@ const ProductDetail = () => {
       }
     }
     
-    // Scroll to the top when product changes
     window.scrollTo(0, 0);
   }, [id]);
 
@@ -71,7 +66,6 @@ const ProductDetail = () => {
 
     setIsLoading(true);
     
-    // Simulate adding to cart with delay
     setTimeout(() => {
       toast.success("Item added to your cart!");
       setIsLoading(false);
@@ -133,7 +127,8 @@ const ProductDetail = () => {
     rating: review.rating,
     date: review.date,
     verified: review.verified,
-    comment: review.comment
+    comment: review.comment,
+    helpful: 0
   }));
 
   return (
@@ -145,7 +140,6 @@ const ProductDetail = () => {
       <ScrollToTop />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
         <nav className="flex mb-6 text-sm">
           <ol className="flex items-center space-x-1">
             <li>
@@ -173,12 +167,10 @@ const ProductDetail = () => {
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Product Images */}
           <div>
-            <ProductGallery images={product.images} />
+            <ProductGallery images={product.images} name={product.name} />
           </div>
 
-          {/* Product Details */}
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-bold">{product.name}</h1>
@@ -198,7 +190,6 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Price */}
             <div className="flex items-center space-x-3">
               <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
               {product.originalPrice && (
@@ -209,10 +200,8 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {/* Description */}
             <p className="text-gray-700">{product.description}</p>
 
-            {/* Color Selection */}
             <div>
               <h3 className="text-sm font-medium mb-2">Color: <span className="font-normal">{selectedColor}</span></h3>
               <div className="flex space-x-3">
@@ -237,7 +226,6 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Size Selection */}
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-medium">Size: <span className="font-normal">{selectedSize}</span></h3>
@@ -260,7 +248,6 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Quantity */}
             <div>
               <h3 className="text-sm font-medium mb-2">Quantity:</h3>
               <QuantityInput 
@@ -271,7 +258,6 @@ const ProductDetail = () => {
               />
             </div>
 
-            {/* Actions */}
             <div className="flex space-x-4">
               <Button className="flex-1" onClick={handleAddToCart} disabled={isLoading}>
                 {isLoading ? (
@@ -297,7 +283,6 @@ const ProductDetail = () => {
               </Button>
             </div>
 
-            {/* Features */}
             <div className="border-t border-b py-4 space-y-2">
               <div className="flex items-center">
                 <Check className="h-4 w-4 mr-2 text-green-600" />
@@ -322,7 +307,6 @@ const ProductDetail = () => {
           </div>
         </div>
         
-        {/* More Product Information */}
         <div className="mt-16">
           <Tabs defaultValue="description" className="w-full">
             <TabsList className="grid grid-cols-3 max-w-lg mx-auto mb-8">
@@ -374,7 +358,8 @@ const ProductDetail = () => {
                 </div>
                   
                 <div className="mt-16">
-                  <style>{`
+                  <style>
+                    {`
                     .faq-answer {
                       max-height: 0;
                       overflow: hidden;

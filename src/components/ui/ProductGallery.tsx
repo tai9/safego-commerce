@@ -4,10 +4,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductGalleryProps {
   images: string[];
-  name: string;
+  name?: string; // Making name optional
 }
 
-const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name }) => {
+const ProductGallery: React.FC<ProductGalleryProps> = ({ images, name = "Product" }) => {
   const [activeImage, setActiveImage] = useState(0);
 
   // Ensure we have unique images by creating a Set
