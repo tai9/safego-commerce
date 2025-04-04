@@ -2,14 +2,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { products } from "@/data/products";
 
-type SearchResult = {
+type SearchResultType = "product" | "order" | "customer" | "user" | "setting" | "report";
+
+export type SearchResult = {
   id: string;
   title: string;
   description?: string;
   path: string;
-  type: "product" | "order" | "customer" | "user" | "setting" | "report";
-  icon?: React.ReactNode;
+  type: SearchResultType;
 };
 
 export function useDashboardSearch() {
@@ -19,15 +21,17 @@ export function useDashboardSearch() {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Mock search data - in a real app this would come from an API
-  const mockSearchData: SearchResult[] = [
-    {
-      id: "product_1",
-      title: "Wireless Headphones",
-      description: "Noise cancelling headphones with Bluetooth",
-      path: "/dashboard/products",
-      type: "product"
-    },
+  // Search data sources
+  const productResults: SearchResult[] = products.map(product => ({
+    id: product.id,
+    title: product.name,
+    description: `${product.category} - ${product.brand}`,
+    path: `/dashboard/products?search=${encodeURIComponent(product.name)}`,
+    type: "product"
+  }));
+  
+  // Mock data for other sections
+  const mockResults: SearchResult[] = [
     {
       id: "order_1",
       title: "Order #12345",
@@ -50,25 +54,28 @@ export function useDashboardSearch() {
       type: "setting"
     },
     {
-      id: "product_2",
-      title: "Smartphone XS",
-      description: "Latest smartphone with 5G",
-      path: "/dashboard/products",
-      type: "product"
-    },
-    {
       id: "report_1",
       title: "Monthly Sales Report",
       description: "Sales performance for March 2025",
       path: "/dashboard/reports",
       type: "report"
+    },
+    {
+      id: "user_1",
+      title: "Admin User",
+      description: "admin@example.com",
+      path: "/dashboard/users",
+      type: "user"
     }
   ];
+
+  // Combine all searchable data
+  const allSearchableData = [...productResults, ...mockResults];
 
   const performSearch = useCallback((searchQuery: string) => {
     setIsSearching(true);
     
-    // Simulate API call with timeout
+    // Search logic
     setTimeout(() => {
       if (searchQuery.trim() === "") {
         setResults([]);
@@ -76,15 +83,27 @@ export function useDashboardSearch() {
         return;
       }
       
-      const filtered = mockSearchData.filter(item => 
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      const query = searchQuery.toLowerCase();
+      const filtered = allSearchableData.filter(item => 
+        item.title.toLowerCase().includes(query) || 
+        (item.description && item.description.toLowerCase().includes(query))
       );
       
-      setResults(filtered);
+      // Sort results with exact matches first
+      const sorted = filtered.sort((a, b) => {
+        const aExactMatch = a.title.toLowerCase() === query;
+        const bExactMatch = b.title.toLowerCase() === query;
+        
+        if (aExactMatch && !bExactMatch) return -1;
+        if (!aExactMatch && bExactMatch) return 1;
+        
+        return 0;
+      });
+      
+      setResults(sorted.slice(0, 10)); // Limit to 10 results
       setIsSearching(false);
-    }, 300); // Simulated API delay
-  }, []);
+    }, 200);
+  }, [allSearchableData]);
   
   const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -95,10 +114,11 @@ export function useDashboardSearch() {
         description: `Searching for "${query}"...`,
       });
       
-      // In a real app, this would navigate to a search results page
-      // navigate(`/dashboard/search?q=${encodeURIComponent(query)}`);
+      if (results.length > 0) {
+        navigateToResult(results[0]); // Navigate to first result
+      }
     }
-  }, [query, toast]);
+  }, [query, results, toast]);
   
   const navigateToResult = useCallback((result: SearchResult) => {
     navigate(result.path);

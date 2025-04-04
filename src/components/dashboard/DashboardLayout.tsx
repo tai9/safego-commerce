@@ -12,12 +12,16 @@ import {
   Menu,
   X,
   Bell,
-  Search,
   LogOut,
+  User,
+  CreditCard,
+  HelpCircle,
+  Keyboard,
+  AlertCircle,
+  Mail,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -38,6 +42,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu";
 import {
   Popover,
@@ -46,7 +52,9 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SearchPopover } from "./SearchPopover";
+import { EnhancedAvatar } from "./EnhancedAvatar";
+import { Drawer, DrawerContent, DrawerTrigger } from "../ui/drawer";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -56,7 +64,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
   const navigationItems = [
@@ -69,11 +76,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       title: "Products",
       icon: Package,
       path: "/dashboard/products",
+      badge: {
+        count: 140,
+        variant: "outline" as const,
+      }
     },
     {
       title: "Orders",
       icon: ShoppingCart,
       path: "/dashboard/orders",
+      badge: {
+        count: 3,
+        variant: "default" as const,
+      }
     },
     {
       title: "Customers",
@@ -129,17 +144,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      toast({
-        title: "Searching",
-        description: `Searching for "${searchQuery}"...`,
-      });
-      // In a real implementation, this would trigger a search
-    }
-  };
-
   const handleLogout = () => {
     toast({
       title: "Logging out",
@@ -163,6 +167,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   const unreadNotificationsCount = notifications.filter(n => !n.read).length;
 
+  const isActive = (path: string) => {
+    if (path === "/dashboard") {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900">
@@ -175,20 +186,35 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <h1 className="text-xl font-bold">E-Shop Admin</h1>
             </div>
           </SidebarHeader>
-          <SidebarContent className="px-2 py-4">
+          <SidebarContent className="p-3">
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
-                    isActive={
-                      location.pathname === item.path ||
-                      (item.path !== "/dashboard" && location.pathname.startsWith(item.path))
-                    }
+                    isActive={isActive(item.path)}
                     onClick={() => navigate(item.path)}
                     tooltip={item.title}
+                    className="group relative flex w-full cursor-pointer items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.title}</span>
+                    <item.icon className={cn(
+                      "h-5 w-5 mr-3 shrink-0",
+                      isActive(item.path) ? "text-primary" : "text-muted-foreground"
+                    )} />
+                    <span className={cn(
+                      isActive(item.path) ? "text-foreground font-semibold" : "text-muted-foreground"
+                    )}>
+                      {item.title}
+                    </span>
+                    {item.badge && (
+                      <Badge variant={item.badge.variant} className="ml-auto">
+                        {item.badge.count}
+                      </Badge>
+                    )}
+                    
+                    {/* Active indicator */}
+                    {isActive(item.path) && (
+                      <div className="absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-primary" />
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -196,10 +222,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </SidebarContent>
           <SidebarFooter className="border-t border-gray-200 dark:border-gray-800 p-4">
             <div className="flex items-center gap-2 mb-4">
-              <Avatar>
-                <AvatarImage src="/placeholder.svg" />
-                <AvatarFallback>AD</AvatarFallback>
-              </Avatar>
+              <EnhancedAvatar 
+                fallback="Admin User"
+                src="/placeholder.svg"
+                size="md"
+                withBorder={true}
+                status="online"
+              />
               <div className="ml-2">
                 <span className="text-sm font-medium">Admin User</span>
                 <p className="text-xs text-muted-foreground">admin@gmail.com</p>
@@ -218,58 +247,77 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </SidebarFooter>
         </Sidebar>
 
-        {/* Mobile menu */}
-        <div className="md:hidden fixed top-0 left-0 z-40 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-          <div className="flex items-center justify-between p-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X /> : <Menu />}
-            </Button>
-            <h1 className="text-xl font-bold">E-Shop Admin</h1>
-            <Avatar>
-              <AvatarImage src="/placeholder.svg" />
-              <AvatarFallback>AD</AvatarFallback>
-            </Avatar>
-          </div>
-          {isMobileMenuOpen && (
-            <div className="bg-white dark:bg-gray-900 p-4 border-t border-gray-200 dark:border-gray-800">
-              <nav className="space-y-2">
-                {navigationItems.map((item) => (
-                  <Button
-                    key={item.path}
-                    variant={location.pathname === item.path ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => {
-                      navigate(item.path);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <item.icon className="mr-2 h-4 w-4" />
-                    {item.title}
+        {/* Mobile drawer */}
+        <Drawer>
+          <div className="md:hidden fixed top-0 left-0 z-40 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center justify-between p-4">
+              <DrawerTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </DrawerTrigger>
+              <h1 className="text-xl font-bold">E-Shop Admin</h1>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <EnhancedAvatar
+                      fallback="AD" 
+                      src="/placeholder.svg"
+                      size="sm"
+                      withBorder={true}
+                      status="online"
+                    />
                   </Button>
-                ))}
-              </nav>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          )}
-        </div>
+          </div>
+          
+          <DrawerContent className="h-[85%] max-w-none">
+            <div className="mx-auto w-full max-w-md">
+              <div className="p-4 bg-background">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-primary h-8 w-8 rounded-md flex items-center justify-center text-primary-foreground font-bold">
+                    EA
+                  </div>
+                  <h2 className="text-lg font-semibold">E-Shop Admin</h2>
+                </div>
+                <div className="space-y-1">
+                  {navigationItems.map((item) => (
+                    <Button
+                      key={item.path}
+                      variant={isActive(item.path) ? "default" : "ghost"}
+                      className="w-full justify-start"
+                      onClick={() => navigate(item.path)}
+                    >
+                      <item.icon className="mr-2 h-4 w-4" />
+                      {item.title}
+                      {item.badge && (
+                        <Badge variant={item.badge.variant} className="ml-auto">
+                          {item.badge.count}
+                        </Badge>
+                      )}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
 
         <main className="flex-1 overflow-auto">
           <header className="hidden md:flex sticky top-0 z-10 items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
             <div className="flex items-center">
               <SidebarTrigger className="mr-4" />
-              <form onSubmit={handleSearch} className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Search everything..."
-                  className="h-10 w-64 rounded-md border border-gray-200 bg-white pl-8 pr-4 text-sm dark:border-gray-800 dark:bg-gray-950"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </form>
+              <SearchPopover />
             </div>
             <div className="flex items-center gap-4">
               <ThemeToggle />
@@ -316,25 +364,59 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full">
-                    <Avatar>
-                      <AvatarImage src="/placeholder.svg" />
-                      <AvatarFallback>AD</AvatarFallback>
-                    </Avatar>
+                    <EnhancedAvatar
+                      fallback="Admin User" 
+                      src="/placeholder.svg"
+                      size="md"
+                      withBorder={true}
+                      status="online"
+                    />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">Admin User</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        admin@gmail.com
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    Account settings
-                  </DropdownMenuItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => navigate("/dashboard/profile")}>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                      <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/dashboard/settings")}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                      <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      <span>Billing</span>
+                      <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      <HelpCircle className="mr-2 h-4 w-4" />
+                      <span>Support</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Keyboard className="mr-2 h-4 w-4" />
+                      <span>Keyboard shortcuts</span>
+                      <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Log out
+                    <span>Log out</span>
+                    <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -348,5 +430,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     </SidebarProvider>
   );
 };
+
+// Helper function for conditional classes
+function cn(...classes: (string | boolean | undefined)[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 export default DashboardLayout;

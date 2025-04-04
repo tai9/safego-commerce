@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { 
@@ -99,8 +100,8 @@ const ProductsManagement = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Product | "",
     direction: "asc" | "desc"
@@ -225,9 +226,19 @@ const ProductsManagement = () => {
     if (selectedProduct) {
       const updatedProducts = products.map(p => 
         p.id === selectedProduct.id 
-        ? { ...p, ...data } 
+        ? { 
+            ...selectedProduct, 
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            category: data.category,
+            discount: data.discount,
+            images: data.images,
+            inStock: data.inStock
+          } 
         : p
       );
+      
       setProducts(updatedProducts);
       
       toast({
