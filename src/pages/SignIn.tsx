@@ -30,6 +30,20 @@ const SignIn = () => {
       return;
     }
     
+    // Check for admin credentials
+    if (email === "admin@gmail.com" && password === "admin") {
+      setTimeout(() => {
+        toast({
+          title: "Admin signed in successfully!",
+          description: "Redirecting to dashboard...",
+        });
+        setLoading(false);
+        navigate('/dashboard');
+      }, 1500);
+      return;
+    }
+    
+    // Regular user sign-in
     setTimeout(() => {
       toast({
         title: "Signed in successfully!",
