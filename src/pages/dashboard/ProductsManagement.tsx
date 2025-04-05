@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { 
@@ -727,8 +726,11 @@ const ProductsManagement = () => {
                 />
                 
                 <DialogFooter>
-                  <Button type="button" variant="outline" asChild>
-                    <DialogClose>Cancel</DialogClose>
+                  <Button type="button" variant="outline" onClick={() => {
+                    if (isEditDialogOpen) setIsEditDialogOpen(false);
+                    if (isAddDialogOpen) setIsAddDialogOpen(false);
+                  }}>
+                    Cancel
                   </Button>
                   <Button type="submit">{selectedProduct ? "Update Product" : "Add Product"}</Button>
                 </DialogFooter>

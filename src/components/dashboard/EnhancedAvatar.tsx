@@ -96,7 +96,7 @@ export function EnhancedAvatar({
     </div>
   );
 
-  // Wrap with tooltip if tooltip text is provided
+  // Wrap with tooltip only if tooltip text is provided
   if (tooltip) {
     return (
       <Tooltip>

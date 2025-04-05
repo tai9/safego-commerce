@@ -27,7 +27,7 @@ import ReportsManagement from "./pages/dashboard/ReportsManagement";
 
 const App = () => (
   <HelmetProvider>
-    {/* Wrap in TooltipProvider for the entire app */}
+    {/* Single TooltipProvider for the entire app with no delayDuration */}
     <TooltipProvider delayDuration={0}>
       <Toaster />
       <Sonner />
