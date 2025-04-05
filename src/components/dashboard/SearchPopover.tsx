@@ -15,7 +15,7 @@ import {
   CommandItem, 
   CommandList 
 } from "../ui/command";
-import { useDashboardSearch, SearchResult } from "@/hooks/use-dashboard-search";
+import { useDashboardSearch, SearchResult } from "@/hooks/search";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useNavigate } from "react-router-dom";
