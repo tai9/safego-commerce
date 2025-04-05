@@ -1,11 +1,11 @@
-
 import * as React from "react";
 import { Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-interface QuantityInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+interface QuantityInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   value: number;
   onValueChange: (value: number) => void;
   min?: number;
@@ -16,7 +16,19 @@ interface QuantityInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
 }
 
 const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
-  ({ value, onValueChange, min = 1, max = 99, step = 1, className, size = "md", ...props }, ref) => {
+  (
+    {
+      value,
+      onValueChange,
+      min = 1,
+      max = 99,
+      step = 1,
+      className,
+      size = "md",
+      ...props
+    },
+    ref
+  ) => {
     const handleDecrease = () => {
       if (value > min) {
         onValueChange(value - step);
@@ -46,7 +58,7 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
       <div
         ref={ref}
         className={cn(
-          "flex items-center rounded-full border border-input overflow-hidden bg-background",
+          "flex items-center rounded-full border border-input overflow-hidden bg-background w-fit",
           sizeClasses[size],
           className
         )}
@@ -64,7 +76,7 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
         >
           <Minus size={size === "sm" ? 14 : size === "md" ? 16 : 18} />
         </Button>
-        
+
         <Input
           type="text"
           inputMode="numeric"
@@ -79,7 +91,7 @@ const QuantityInput = React.forwardRef<HTMLDivElement, QuantityInputProps>(
           max={max}
           {...props}
         />
-        
+
         <Button
           type="button"
           variant="ghost"
