@@ -18,7 +18,6 @@ import {
 import { useDashboardSearch, SearchResult } from "@/hooks/search";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { useNavigate } from "react-router-dom";
 
 export function SearchPopover() {
   const {
@@ -32,7 +31,6 @@ export function SearchPopover() {
 
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
 
   // Handle keyboard shortcut to focus search
   useEffect(() => {

@@ -38,7 +38,3 @@ export function useDashboardSearch() {
     navigateToResult
   };
 }
-
-// Re-export the types
-export type { SearchResult } from "./types";
-export type { SearchResultType } from "./types";
