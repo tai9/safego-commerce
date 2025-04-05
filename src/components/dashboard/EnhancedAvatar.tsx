@@ -2,6 +2,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 const avatarVariants = cva(
   "relative flex shrink-0 overflow-hidden rounded-full",
@@ -39,6 +44,7 @@ export interface EnhancedAvatarProps extends VariantProps<typeof avatarVariants>
   src?: string;
   alt?: string;
   fallback: string;
+  tooltip?: string;
 }
 
 export function EnhancedAvatar({
@@ -49,6 +55,7 @@ export function EnhancedAvatar({
   src,
   alt,
   fallback,
+  tooltip,
 }: EnhancedAvatarProps) {
   const initials = fallback
     .split(" ")
@@ -56,7 +63,7 @@ export function EnhancedAvatar({
     .join("")
     .toUpperCase();
 
-  return (
+  const avatarElement = (
     <div className="relative">
       <Avatar className={cn(avatarVariants({ size, status, withBorder }), className)}>
         <AvatarImage src={src} alt={alt || fallback} />
@@ -88,4 +95,20 @@ export function EnhancedAvatar({
       )}
     </div>
   );
+
+  // Wrap with tooltip if tooltip text is provided
+  if (tooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {avatarElement}
+        </TooltipTrigger>
+        <TooltipContent>
+          {tooltip}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return avatarElement;
 }
