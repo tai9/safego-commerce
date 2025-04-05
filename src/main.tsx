@@ -45,7 +45,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="system" storageKey="safego-ui-theme">
+        <ThemeProvider defaultTheme="light" storageKey="safego-ui-theme">
           <App />
         </ThemeProvider>
       </QueryClientProvider>

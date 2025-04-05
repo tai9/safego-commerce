@@ -16,7 +16,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: "light", // Changed default from "system" to "light"
+  theme: "light",
   toggleTheme: () => null,
   setTheme: () => null,
 };
@@ -25,7 +25,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "light", // Changed default from "system" to "light"
+  defaultTheme = "light",
   storageKey = "safego-ui-theme",
   ...props
 }: ThemeProviderProps) {
