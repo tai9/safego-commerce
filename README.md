@@ -1,69 +1,115 @@
-# Welcome to your Lovable project
 
-## Project info
+# E-Commerce Dashboard & Store
 
-**URL**: https://lovable.dev/projects/30badf08-d630-41e6-8447-e7fd1577bca0
+A comprehensive e-commerce platform with both a customer-facing storefront and an admin dashboard for complete store management.
 
-## How can I edit this code?
+## Project Overview
 
-There are several ways of editing your application.
+This project is a full-featured e-commerce platform built with modern web technologies. It provides:
 
-**Use Lovable**
+- A responsive customer-facing storefront for browsing and purchasing products
+- A powerful admin dashboard for managing products, orders, customers, and analytics
+- Global search functionality across all entities
+- Responsive design that works on all devices
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/30badf08-d630-41e6-8447-e7fd1577bca0) and start prompting.
+## Features
 
-Changes made via Lovable will be committed automatically to this repo.
+### Customer-Facing Store
+- Product browsing with categories and filters
+- Product search with suggestions
+- Product detail pages with galleries, reviews, and related products
+- Shopping cart functionality
+- User authentication and profiles
+- Responsive design for mobile and desktop
 
-**Use your preferred IDE**
+### Admin Dashboard
+- Comprehensive overview with key metrics and charts
+- Products management (add, edit, delete)
+- Orders tracking and management
+- Customer database and insights
+- User roles and permissions
+- Analytics and reporting
+- Global search functionality across all data
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Technology Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Frontend Framework**: React with TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui component library
+- **State Management**: React Hooks & Context API
+- **Data Fetching**: React Query
+- **Routing**: React Router DOM
+- **Charts & Visualization**: Recharts
+- **Form Management**: React Hook Form with Zod validation
+- **Icons**: Lucide React
 
-Follow these steps:
+## Getting Started
+
+To run this project locally:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone <your-git-url>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to the project directory
+cd <project-name>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `src/`
+  - `components/` - Reusable UI components
+    - `dashboard/` - Dashboard-specific components
+    - `layout/` - Layout components (navbar, footer, etc.)
+    - `ui/` - Base UI components
+  - `pages/` - Page components and routes
+    - `dashboard/` - Admin dashboard pages
+  - `hooks/` - Custom React hooks
+    - `search/` - Search-related hooks and utilities
+  - `data/` - Mock data and API interfaces
+  - `lib/` - Utility functions and helpers
 
-**Use GitHub Codespaces**
+## Global Search Implementation
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+One of the standout features is the global search functionality in the dashboard that allows users to quickly find:
 
-## What technologies are used for this project?
+- Products
+- Orders
+- Customers
+- Users
+- Settings
+- Reports
 
-This project is built with .
+The search is implemented using a modular approach with dedicated hooks:
+- `useDashboardSearch` - Main search hook that combines all search functionality
+- `useSearchData` - Manages the data sources for search
+- `useSearchLogic` - Handles the search algorithm and filtering
+- `useSearchNavigation` - Manages navigation to search results
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Deployment
 
-## How can I deploy this project?
+The application can be deployed to any static hosting service:
 
-Simply open [Lovable](https://lovable.dev/projects/30badf08-d630-41e6-8447-e7fd1577bca0) and click on Share -> Publish.
+1. Build the production version:
+   ```sh
+   npm run build
+   ```
+2. Deploy the contents of the `dist` directory
 
-## I want to use a custom domain - is that possible?
+## Contributing
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Project URL
+
+Visit the live project at: https://lovable.dev/projects/30badf08-d630-41e6-8447-e7fd1577bca0
